@@ -3,12 +3,16 @@ import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const Header = () => {
+interface HeaderProps {
+  text?: string;
+}
+
+const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
   return (
     <header className="bg-white border-b border-gray-100 py-4 px-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <h1 className="text-2xl font-display font-semibold">Career Dashboard</h1>
+          <h1 className="text-2xl font-display font-semibold">{text}</h1>
           <p className="text-gray-500 text-sm mt-1">Thursday, April 6, 2025</p>
         </div>
 
