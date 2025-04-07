@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import CareerPaths from "./pages/CareerPaths";
 import Profile from "./pages/Profile";
 import SkillAnalysis from "./pages/SkillAnalysis";
+import WeeklyGoals from "./pages/WeeklyGoals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/career-paths" element={<CareerPaths />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/skills" element={<SkillAnalysis />} />
+          <Route path="/goals" element={<WeeklyGoals />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
