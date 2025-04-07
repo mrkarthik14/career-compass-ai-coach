@@ -9,12 +9,11 @@ interface GoalSummaryProps {
   description: string;
   icon: LucideIcon;
   color: string;
-  onClick?: () => void;
 }
 
-const GoalSummary = ({ title, count, description, icon: Icon, color, onClick }: GoalSummaryProps) => {
+const GoalSummary = ({ title, count, description, icon: Icon, color }: GoalSummaryProps) => {
   return (
-    <Card className={onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""} onClick={onClick}>
+    <Card>
       <CardContent className="p-6">
         <div className="flex justify-between items-start">
           <div>

@@ -1,185 +1,89 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  BookOpen,
-  User,
-  BarChart2,
-  CheckSquare,
-  FileText,
-  Code,
-  MessageSquare,
-  ChevronDown,
-  ChevronRight,
-  Settings,
-  LogOut,
-} from "lucide-react";
-import {
-  Sidebar as ShadcnSidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
-import { Checkbox } from "@/components/ui/checkbox";
 
-const Sidebar = () => {
-  const location = useLocation();
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+import { Link } from "react-router-dom";
+import { BookOpen, Brain, Calendar, ChevronLeft, ChevronRight, Home, LineChart, MessageSquare, User } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+interface SidebarProps {
+  className?: string;
+}
+
+const Sidebar = ({ className }: SidebarProps) => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <ShadcnSidebar>
-        <SidebarHeader className="flex flex-col gap-4 px-3 pt-3">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-mentor-purple">
-                <BookOpen className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-lg font-semibold">MentorMe</span>
-            </Link>
-            <SidebarTrigger />
+    <div
+      className={cn(
+        "flex flex-col h-screen bg-mentor-purple text-white transition-all duration-300",
+        collapsed ? "w-20" : "w-64",
+        className
+      )}
+    >
+      <div className="flex items-center justify-between p-4">
+        {!collapsed && (
+          <div className="font-display font-bold text-xl">
+            CareerCompass
           </div>
-        </SidebarHeader>
+        )}
+        <button
+          onClick={toggleSidebar}
+          className="p-2 rounded-full hover:bg-white/10 transition-colors"
+        >
+          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        </button>
+      </div>
 
-        <SidebarContent className="px-2">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/"}
-                tooltip="Dashboard"
-              >
-                <Link to="/">
-                  <Home className="mr-2" />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+      <div className="flex-1 py-8">
+        <nav className="space-y-2 px-3">
+          <NavItem icon={Home} label="Dashboard" to="/" collapsed={collapsed} />
+          <NavItem icon={User} label="My Profile" to="/profile" collapsed={collapsed} />
+          <NavItem icon={LineChart} label="Career Paths" to="/career-paths" collapsed={collapsed} />
+          <NavItem icon={Brain} label="Skills Analysis" to="/skills" collapsed={collapsed} />
+          <NavItem icon={Calendar} label="Weekly Goals" to="/goals" collapsed={collapsed} />
+          <NavItem icon={BookOpen} label="Resources" to="/resources" collapsed={collapsed} />
+          <NavItem icon={MessageSquare} label="Mentor Chat" to="/chat" collapsed={collapsed} />
+        </nav>
+      </div>
 
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/career-paths"}
-                tooltip="Career Paths"
-              >
-                <Link to="/career-paths">
-                  <BookOpen className="mr-2" />
-                  <span>Career Paths</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/skills"}
-                tooltip="Skill Analysis"
-              >
-                <Link to="/skills">
-                  <BarChart2 className="mr-2" />
-                  <span>Skill Analysis</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/goals"}
-                tooltip="Weekly Goals"
-              >
-                <Link to="/goals">
-                  <CheckSquare className="mr-2" />
-                  <span>Weekly Goals</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={() => setResourcesOpen(!resourcesOpen)}
-                tooltip="Resources"
-              >
-                <FileText className="mr-2" />
-                <span>Resources</span>
-                {resourcesOpen ? (
-                  <ChevronDown className="ml-auto h-4 w-4" />
-                ) : (
-                  <ChevronRight className="ml-auto h-4 w-4" />
-                )}
-              </SidebarMenuButton>
-
-              {resourcesOpen && (
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link to="/resources?tab=project-generator">
-                        <Code className="mr-2 h-4 w-4" />
-                        <span>Project Generator</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link to="/resources?tab=resume-builder">
-                        <FileText className="mr-2 h-4 w-4" />
-                        <span>Resume Builder</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link to="/resources?tab=mock-interviewer">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        <span>Mock Interviewer</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              )}
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/profile"}
-                tooltip="Profile"
-              >
-                <Link to="/profile">
-                  <User className="mr-2" />
-                  <span>Profile</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-
-        <SidebarFooter className="p-4">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/avatars/01.png" alt="@user" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">John Doe</span>
-              <span className="text-xs text-gray-500">john@example.com</span>
+      <div className="p-4">
+        <div className={cn(
+          "rounded-lg p-3 bg-white/10",
+          collapsed ? "items-center justify-center" : "items-start"
+        )}>
+          {!collapsed ? (
+            <div className="text-sm">
+              <p className="font-semibold">Need help?</p>
+              <p className="opacity-80 text-xs mt-1">Ask your AI mentor for guidance</p>
             </div>
-          </div>
-        </SidebarFooter>
-      </ShadcnSidebar>
-    </SidebarProvider>
+          ) : (
+            <MessageSquare size={20} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface NavItemProps {
+  icon: React.ElementType;
+  label: string;
+  to: string;
+  collapsed: boolean;
+}
+
+const NavItem = ({ icon: Icon, label, to, collapsed }: NavItemProps) => {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors text-white/90 hover:text-white"
+    >
+      <Icon size={20} />
+      {!collapsed && <span>{label}</span>}
+    </Link>
   );
 };
 
