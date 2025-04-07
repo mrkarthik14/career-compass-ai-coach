@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import SkillAnalysis from "./pages/SkillAnalysis";
 import WeeklyGoals from "./pages/WeeklyGoals";
 import Resources from "./pages/Resources";
+import MentorChat from "./pages/MentorChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/skills" element={<SkillAnalysis />} />
           <Route path="/goals" element={<WeeklyGoals />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/chat" element={<MentorChat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
