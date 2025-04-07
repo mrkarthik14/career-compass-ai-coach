@@ -21,6 +21,7 @@ const MentorChat = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -76,8 +77,8 @@ const MentorChat = () => {
   const generateMentorResponse = (userInput: string) => {
     const lowerInput = userInput.toLowerCase();
     
-    // Simple pattern matching for demo purposes
-    if (lowerInput.includes("learning path") || lowerInput.includes("how to learn")) {
+    // Enhanced pattern matching based on blueprint capabilities
+    if (lowerInput.includes("learning path") || lowerInput.includes("how to learn") || lowerInput.includes("roadmap")) {
       return "I'd be happy to design a learning path for you! To create the most effective plan, I need to understand a few things:\n\n1. What's your current skill level with this topic?\n2. What's your end goal or the specific project you want to build?\n3. How much time can you dedicate weekly?\n4. Do you prefer videos, reading, or hands-on projects?\n\nOnce I know these details, I can create a step-by-step learning path with resources and milestones.";
     }
     
@@ -93,8 +94,16 @@ const MentorChat = () => {
       return "Setting clear goals is essential for progress. Let's break down your objectives:\n\n1. **This Week**: What's one skill you can focus on mastering?\n2. **This Month**: What small project can you complete?\n3. **This Quarter**: What major milestone do you want to reach?\n\nRemember that consistency matters more than intensity. I recommend the 'small steps daily' approach to build momentum. Would you like to set up a weekly check-in to track your progress?";
     }
     
-    // Default response
-    return "I'm here to help guide your learning and career journey. I can assist with creating personalized learning paths, suggesting portfolio projects, preparing for interviews, or setting achievable goals. What specific area would you like to focus on today?";
+    if (lowerInput.includes("stuck") || lowerInput.includes("lost") || lowerInput.includes("confused") || lowerInput.includes("help")) {
+      return "I understand feeling stuck can be frustrating. Let's take a step back and break things down:\n\n1. What specific part are you struggling with?\n2. What have you tried so far?\n3. What resources have you been using?\n\nSometimes, a short break or switching to a different learning approach can help overcome these obstacles. Would you like me to suggest some alternative learning strategies or resources for your current challenge?";
+    }
+    
+    if (lowerInput.includes("motivation") || lowerInput.includes("tired") || lowerInput.includes("burnout")) {
+      return "It's completely normal to experience dips in motivation or feel burnout when learning challenging topics. Remember that learning is a marathon, not a sprint. Here are some strategies that might help:\n\n1. Take a short break to recharge\n2. Revisit your 'why' - what inspired you to start this journey?\n3. Try a completely different format (video instead of text, or vice versa)\n4. Work on a small, enjoyable project that gives you a quick win\n\nWould it help to adjust your learning plan to include more variety or shorter study sessions?";
+    }
+    
+    // Default response with personalization prompt
+    return "I'm here to help guide your learning and career journey. I can assist with creating personalized learning paths, suggesting portfolio projects, preparing for interviews, or setting achievable goals. What specific area would you like to focus on today? And if you don't mind sharing, what's your preferred learning style (videos, reading, hands-on projects)?";
   };
 
   const toggleListening = () => {
@@ -104,11 +113,28 @@ const MentorChat = () => {
         setIsListening(true);
         toast({
           title: "Listening...",
-          description: "Speech recognition would be active in a production environment.",
+          description: "Speak clearly into your microphone.",
         });
-        // In a real implementation, you would initialize speech recognition here
-        // For now, we'll just toggle the state for UI demo purposes
-        setTimeout(() => setIsListening(false), 3000);
+        
+        // Simulate voice transcription (would connect to Gemini in production)
+        setTimeout(() => {
+          const simulatedTranscripts = [
+            "I need help creating a learning plan for data science",
+            "Can you suggest some project ideas for a backend developer portfolio?",
+            "I'm feeling stuck with my current learning path",
+            "Help me prepare for a software engineering interview"
+          ];
+          
+          const randomTranscript = simulatedTranscripts[Math.floor(Math.random() * simulatedTranscripts.length)];
+          setTranscript(randomTranscript);
+          setInput(randomTranscript);
+          setIsListening(false);
+          
+          toast({
+            title: "Transcript Ready",
+            description: "Voice input captured successfully.",
+          });
+        }, 3000);
       } else {
         toast({
           title: "Speech Recognition Not Available",
@@ -118,7 +144,25 @@ const MentorChat = () => {
       }
     } else {
       setIsListening(false);
+      setTranscript("");
+      toast({
+        title: "Listening Stopped",
+        description: "Voice capture canceled.",
+      });
     }
+  };
+
+  const detectMood = (text: string): string => {
+    // This would be powered by Gemini in production to analyze emotional tone
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes("stuck") || lowerText.includes("confused") || lowerText.includes("difficult")) {
+      return "struggling";
+    } else if (lowerText.includes("excited") || lowerText.includes("interested")) {
+      return "motivated";
+    } else if (lowerText.includes("tired") || lowerText.includes("overwhelmed")) {
+      return "burnout";
+    }
+    return "neutral";
   };
 
   return (
@@ -167,13 +211,19 @@ const MentorChat = () => {
 
           <Card className="max-w-4xl mx-auto w-full">
             <CardContent className="p-4">
+              {transcript && (
+                <div className="mb-2 p-2 bg-gray-100 rounded-md text-sm text-gray-700">
+                  <p className="font-medium">Transcript:</p>
+                  <p>{transcript}</p>
+                </div>
+              )}
               <div className="flex gap-2">
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask your AI mentor for guidance..."
                   className="min-h-[80px] flex-1"
-                  disabled={isLoading}
+                  disabled={isLoading || isListening}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -188,18 +238,33 @@ const MentorChat = () => {
                   size="icon"
                   onClick={toggleListening}
                   className={isListening ? "bg-red-100" : ""}
+                  disabled={isLoading}
                 >
                   {isListening ? <MicOff size={18} /> : <Mic size={18} />}
                 </Button>
                 <Button
                   onClick={handleSendMessage}
-                  disabled={!input.trim() || isLoading}
+                  disabled={!input.trim() || isLoading || isListening}
                   className="gap-2"
                 >
                   {isLoading ? "Thinking..." : "Send"}
                   {!isLoading && <Send size={16} />}
                 </Button>
               </div>
+              {isListening && (
+                <div className="mt-3 text-center">
+                  <div className="inline-block">
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="w-1 h-8 bg-mentor-purple rounded-full animate-pulse"></div>
+                      <div className="w-1 h-12 bg-mentor-purple rounded-full animate-pulse delay-75"></div>
+                      <div className="w-1 h-6 bg-mentor-purple rounded-full animate-pulse delay-150"></div>
+                      <div className="w-1 h-10 bg-mentor-purple rounded-full animate-pulse delay-300"></div>
+                      <div className="w-1 h-4 bg-mentor-purple rounded-full animate-pulse delay-300"></div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">Listening...</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
