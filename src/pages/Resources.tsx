@@ -175,7 +175,7 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header title="Career Resources" />
+        <Header text="Career Resources" />
         <div className="flex-1 overflow-auto p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold">Career Development Resources</h1>
