@@ -13,6 +13,9 @@ import Resources from "./pages/Resources";
 import MentorResources from "./pages/MentorResources";
 import EnhancedMentorChat from "./components/mentor/EnhancedMentorChat";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,12 @@ const App = () => (
           <Route path="/resources" element={<Resources />} />
           <Route path="/mentor-resources" element={<MentorResources />} />
           <Route path="/chat" element={<EnhancedMentorChat />} />
+          
+          {/* Authentication Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
