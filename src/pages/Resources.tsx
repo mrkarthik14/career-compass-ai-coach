@@ -1,12 +1,13 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Code, FileText, MessageSquare } from "lucide-react";
+import { Code, FileText, MessageSquare, Video, Mic } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const Resources = () => {
   const [projectInput, setProjectInput] = useState("");
@@ -20,6 +21,8 @@ const Resources = () => {
   const [isGeneratingProject, setIsGeneratingProject] = useState(false);
   const [isGeneratingResume, setIsGeneratingResume] = useState(false);
   const [isGeneratingInterview, setIsGeneratingInterview] = useState(false);
+  
+  const [interviewSessionType, setInterviewSessionType] = useState("text");
 
   const handleProjectGeneration = () => {
     setIsGeneratingProject(true);
@@ -134,8 +137,12 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
   const handleInterviewGeneration = () => {
     setIsGeneratingInterview(true);
     setTimeout(() => {
+      const sessionTypeText = interviewSessionType === "voice" ? 
+        "Voice Session" : interviewSessionType === "video" ? 
+        "Video Session" : "Text Session";
+      
       setInterviewResponse(`
-# Mock Interview: Product Analyst Role
+# Mock Interview: Product Analyst Role (${sessionTypeText})
 
 ## Question 1: Tell me about your background and why you're interested in this product analyst role.
 *Your response...*
@@ -169,6 +176,35 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
       `);
       setIsGeneratingInterview(false);
     }, 1500);
+  };
+
+  const renderSessionTypeUI = () => {
+    if (interviewSessionType === "voice") {
+      return (
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-center space-x-4">
+            <Mic className="h-10 w-10 text-mentor-purple" />
+            <div>
+              <h3 className="font-medium">Voice Session</h3>
+              <p className="text-sm text-gray-500">Answer questions using your microphone</p>
+            </div>
+          </div>
+        </div>
+      );
+    } else if (interviewSessionType === "video") {
+      return (
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-center space-x-4">
+            <Video className="h-10 w-10 text-mentor-purple" />
+            <div>
+              <h3 className="font-medium">Video Session</h3>
+              <p className="text-sm text-gray-500">Face-to-face interview with video and audio</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -289,6 +325,37 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                         onChange={(e) => setInterviewInput(e.target.value)}
                       />
                     </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-sm font-medium mb-3">Interview Session Type</h3>
+                      <RadioGroup 
+                        value={interviewSessionType} 
+                        onValueChange={setInterviewSessionType}
+                        className="flex space-x-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="text" id="text" />
+                          <Label htmlFor="text" className="flex items-center gap-1">
+                            <MessageSquare size={16} /> Text
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="voice" id="voice" />
+                          <Label htmlFor="voice" className="flex items-center gap-1">
+                            <Mic size={16} /> Voice
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="video" id="video" />
+                          <Label htmlFor="video" className="flex items-center gap-1">
+                            <Video size={16} /> Video
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                      
+                      {renderSessionTypeUI()}
+                    </div>
+                    
                     {interviewResponse && (
                       <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
                         <pre className="whitespace-pre-wrap font-mono text-sm">{interviewResponse}</pre>
@@ -302,7 +369,7 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     disabled={isGeneratingInterview || !interviewInput.trim()}
                     className="w-full"
                   >
-                    {isGeneratingInterview ? "Starting Interview..." : "Start Mock Interview"}
+                    {isGeneratingInterview ? "Starting Interview..." : `Start ${interviewSessionType === "voice" ? "Voice" : interviewSessionType === "video" ? "Video" : "Mock"} Interview`}
                   </Button>
                 </CardFooter>
               </Card>

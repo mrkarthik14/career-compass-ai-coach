@@ -2,18 +2,22 @@
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 interface HeaderProps {
   text?: string;
 }
 
 const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
+  // Get current date and format it
+  const currentDate = format(new Date(), "EEEE, MMMM d, yyyy");
+
   return (
     <header className="bg-white border-b border-gray-100 py-4 px-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <h1 className="text-2xl font-display font-semibold">{text}</h1>
-          <p className="text-gray-500 text-sm mt-1">Thursday, April 6, 2025</p>
+          <p className="text-gray-500 text-sm mt-1">{currentDate}</p>
         </div>
 
         <div className="flex items-center gap-4">
