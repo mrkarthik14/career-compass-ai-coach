@@ -1,15 +1,23 @@
-import { useState } from "react";
+
+import { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Code, FileText, MessageSquare, Video, Mic } from "lucide-react";
+import { Code, FileText, MessageSquare, Video, Mic, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import InterviewView from "@/components/interview/InterviewView";
+import { ProjectResult } from "@/components/resources/ProjectResult";
+import { ResumeResult } from "@/components/resources/ResumeResult";
 
 const Resources = () => {
+  const navigate = useNavigate();
   const [projectInput, setProjectInput] = useState("");
   const [resumeInput, setResumeInput] = useState("");
   const [interviewInput, setInterviewInput] = useState("");
@@ -17,12 +25,22 @@ const Resources = () => {
   const [projectResponse, setProjectResponse] = useState("");
   const [resumeResponse, setResumeResponse] = useState("");
   const [interviewResponse, setInterviewResponse] = useState("");
+  const [isInterviewActive, setIsInterviewActive] = useState(false);
   
   const [isGeneratingProject, setIsGeneratingProject] = useState(false);
   const [isGeneratingResume, setIsGeneratingResume] = useState(false);
   const [isGeneratingInterview, setIsGeneratingInterview] = useState(false);
   
   const [interviewSessionType, setInterviewSessionType] = useState("text");
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const mockInterviewQuestions = [
+    "Tell me about your background and why you're interested in this product analyst role.",
+    "How would you approach analyzing the performance of a new feature we just launched?",
+    "A key metric has dropped 15% week-over-week. How would you investigate this?",
+    "Describe a situation where you had to communicate complex data findings to non-technical stakeholders.",
+    "How would you determine if a correlation between two metrics is actually causal?"
+  ];
 
   const handleProjectGeneration = () => {
     setIsGeneratingProject(true);
@@ -86,7 +104,16 @@ const Resources = () => {
 
 **Difficulty:** Advanced
       `);
+      toast({
+        title: "Project ideas generated!",
+        description: "You can now view your customized project suggestions",
+      });
       setIsGeneratingProject(false);
+      
+      // This would be replaced with actual API call to generate visual project mock-ups
+      setTimeout(() => {
+        navigate("/resources?tab=generator&view=projectResult");
+      }, 500);
     }, 1500);
   };
 
@@ -130,51 +157,51 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
 *Relevant Coursework:* Data Structures & Algorithms, Database Systems, Statistics for Data Science, Machine Learning Fundamentals
 *GPA:* 3.8/4.0
       `);
+      toast({
+        title: "Resume generated!",
+        description: "Your ATS-optimized resume is ready to view",
+      });
       setIsGeneratingResume(false);
     }, 1500);
   };
 
   const handleInterviewGeneration = () => {
     setIsGeneratingInterview(true);
+    
+    // Simulate camera/mic access for video/voice interviews
+    if (interviewSessionType !== "text") {
+      toast({
+        title: `Preparing ${interviewSessionType} interview`,
+        description: `Setting up your ${interviewSessionType} session...`,
+      });
+    }
+    
     setTimeout(() => {
-      const sessionTypeText = interviewSessionType === "voice" ? 
-        "Voice Session" : interviewSessionType === "video" ? 
-        "Video Session" : "Text Session";
-      
-      setInterviewResponse(`
-# Mock Interview: Product Analyst Role (${sessionTypeText})
-
-## Question 1: Tell me about your background and why you're interested in this product analyst role.
-*Your response...*
-
-**Rating: 7/10**
-**Feedback:** Good overview of your background, but could be more specific about why this particular company interests you. Try to research the company's products and mention how your skills align with their specific needs.
-
-## Question 2: How would you approach analyzing the performance of a new feature we just launched?
-*Your response...*
-
-**Rating: 8/10**
-**Feedback:** Strong methodology! You covered key metrics and A/B testing. Consider also mentioning qualitative feedback channels and how you'd combine quantitative and qualitative insights.
-
-## Question 3: A key metric has dropped 15% week-over-week. How would you investigate this?
-*Your response...*
-
-**Rating: 6/10**
-**Feedback:** Good start with segmentation and checking for data issues. Try to structure your approach more clearly - perhaps using a framework like "data validation → segmentation → hypothesis generation → testing → recommendations."
-
-## Question 4: Describe a situation where you had to communicate complex data findings to non-technical stakeholders.
-*Your response...*
-
-**Rating: 9/10**
-**Feedback:** Excellent example with clear structure using the STAR method. Your focus on visual storytelling and actionable takeaways is exactly what interviewers look for.
-
-## Question 5: How would you determine if a correlation between two metrics is actually causal?
-*Your response...*
-
-**Rating: 7/10**
-**Feedback:** Good understanding of correlation vs. causation. To strengthen your answer, mention specific techniques like A/B testing, natural experiments, or regression discontinuity designs with brief explanations of how you'd implement them.
-      `);
+      // Instead of just setting text response, we'll set the interview as active
+      setIsInterviewActive(true);
       setIsGeneratingInterview(false);
+      
+      if (interviewSessionType === "video" && videoRef.current) {
+        // Mock video feed - in a real app, this would use getUserMedia
+        try {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+              if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+              }
+            })
+            .catch(err => {
+              console.error("Error accessing camera:", err);
+              toast({
+                title: "Camera access denied",
+                description: "Please allow camera access to use video interview mode",
+                variant: "destructive"
+              });
+            });
+        } catch (error) {
+          console.error("Error setting up video:", error);
+        }
+      }
     }, 1500);
   };
 
@@ -207,6 +234,41 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
     return null;
   };
 
+  // Use the URL hash to determine which tab to show
+  const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get('tab');
+  const viewParam = params.get('view');
+
+  // Show project result view if the parameter is set
+  if (viewParam === 'projectResult') {
+    return <ProjectResult projectInput={projectInput} onBack={() => navigate("/resources")} />;
+  }
+  
+  // Show resume result view if the parameter is set
+  if (viewParam === 'resumeResult') {
+    return <ResumeResult resumeInput={resumeInput} resumeResponse={resumeResponse} onBack={() => navigate("/resources")} />;
+  }
+
+  // If interview is active, show the interview view instead of the regular page
+  if (isInterviewActive) {
+    return (
+      <InterviewView 
+        sessionType={interviewSessionType}
+        questions={mockInterviewQuestions}
+        jobRole={interviewInput}
+        onEnd={() => {
+          setIsInterviewActive(false);
+          // If there was a video stream, stop it
+          if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -220,7 +282,7 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
             </p>
           </div>
           
-          <Tabs defaultValue="generator" className="w-full">
+          <Tabs defaultValue={tabParam || "generator"} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="generator" className="flex items-center gap-2">
                 <Code size={16} /> Project Generator
@@ -254,6 +316,16 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     {projectResponse && (
                       <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
                         <pre className="whitespace-pre-wrap font-mono text-sm">{projectResponse}</pre>
+                        
+                        <div className="mt-4 flex justify-center">
+                          <Button 
+                            onClick={() => navigate("/resources?tab=generator&view=projectResult")}
+                            className="mt-2"
+                            variant="outline"
+                          >
+                            View Interactive Project Examples
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -264,7 +336,12 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     disabled={isGeneratingProject || !projectInput.trim()}
                     className="w-full"
                   >
-                    {isGeneratingProject ? "Generating Ideas..." : "Generate Project Ideas"}
+                    {isGeneratingProject ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating Ideas...
+                      </>
+                    ) : "Generate Project Ideas"}
                   </Button>
                 </CardFooter>
               </Card>
@@ -291,6 +368,16 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     {resumeResponse && (
                       <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
                         <pre className="whitespace-pre-wrap font-mono text-sm">{resumeResponse}</pre>
+                        
+                        <div className="mt-4 flex justify-center">
+                          <Button 
+                            onClick={() => navigate("/resources?tab=resume&view=resumeResult")}
+                            className="mt-2"
+                            variant="outline"
+                          >
+                            View ATS-Optimized Resume Template
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -301,7 +388,12 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     disabled={isGeneratingResume || !resumeInput.trim()}
                     className="w-full"
                   >
-                    {isGeneratingResume ? "Building Resume..." : "Build Resume"}
+                    {isGeneratingResume ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Building Resume...
+                      </>
+                    ) : "Build Resume"}
                   </Button>
                 </CardFooter>
               </Card>
@@ -354,13 +446,13 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                       </RadioGroup>
                       
                       {renderSessionTypeUI()}
+                      
+                      {interviewSessionType === "video" && (
+                        <div className="hidden">
+                          <video ref={videoRef} autoPlay muted />
+                        </div>
+                      )}
                     </div>
-                    
-                    {interviewResponse && (
-                      <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
-                        <pre className="whitespace-pre-wrap font-mono text-sm">{interviewResponse}</pre>
-                      </div>
-                    )}
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -369,7 +461,12 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                     disabled={isGeneratingInterview || !interviewInput.trim()}
                     className="w-full"
                   >
-                    {isGeneratingInterview ? "Starting Interview..." : `Start ${interviewSessionType === "voice" ? "Voice" : interviewSessionType === "video" ? "Video" : "Mock"} Interview`}
+                    {isGeneratingInterview ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Starting Interview...
+                      </>
+                    ) : `Start ${interviewSessionType === "voice" ? "Voice" : interviewSessionType === "video" ? "Video" : "Mock"} Interview`}
                   </Button>
                 </CardFooter>
               </Card>
