@@ -27,6 +27,13 @@ const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   
+  // Mock user state - in a real app, this would come from authentication
+  const [user] = useState({
+    name: "John Smith",
+    role: "Software Developer",
+    initials: "JS"
+  });
+  
   // Notifications state
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New resource available", description: "Check out the new interview preparation materials", read: false },
@@ -63,13 +70,13 @@ const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
         navigate("/skills");
         toast({
           title: "Search Results",
-          description: "Navigated to Skills Analysis",
+          description: "Found resources related to skills analysis",
         });
       } else if (searchQuery.toLowerCase().includes("goal")) {
         navigate("/goals");
         toast({
           title: "Search Results",
-          description: "Navigated to Weekly Goals",
+          description: "Found resources related to weekly goals",
         });
       } else {
         toast({
@@ -177,20 +184,12 @@ const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
           </DropdownMenu>
 
           <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate("/login")}
-              className="hidden md:flex"
-            >
-              Sign In
-            </Button>
             <div className="w-10 h-10 rounded-full bg-mentor-lightPurple flex items-center justify-center text-white font-medium">
-              JS
+              {user.initials}
             </div>
             <div className="hidden md:block">
-              <p className="font-medium text-sm">John Smith</p>
-              <p className="text-gray-500 text-xs">Software Developer</p>
+              <p className="font-medium text-sm">{user.name}</p>
+              <p className="text-gray-500 text-xs">{user.role}</p>
             </div>
           </div>
         </div>

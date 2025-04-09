@@ -39,7 +39,7 @@ const Sidebar = ({ className }: SidebarProps) => {
 
       <div className="flex-1 py-8">
         <nav className="space-y-2 px-3">
-          <NavItem icon={Home} label="Dashboard" to="/" collapsed={collapsed} />
+          <NavItem icon={Home} label="Dashboard" to="/dashboard" collapsed={collapsed} />
           <NavItem icon={User} label="My Profile" to="/profile" collapsed={collapsed} />
           <NavItem icon={LineChart} label="Career Paths" to="/career-paths" collapsed={collapsed} />
           <NavItem icon={Brain} label="Skills Analysis" to="/skills" collapsed={collapsed} />

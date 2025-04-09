@@ -8,6 +8,7 @@ import ProgressChart from "@/components/ProgressChart";
 import ProgressBar from "@/components/ProgressBar";
 import GoalCard from "@/components/GoalCard";
 import MentorChat from "@/components/MentorChat";
+import DailyProgress from "@/components/DailyProgress";
 
 const progressData = [
   { name: "Mon", progress: 30 },
@@ -131,7 +132,6 @@ const Index = () => {
                   target="4 projects" 
                   current="0.5/4" 
                   icon={LineChart}
-
                   daysLeft={14}
                   color="bg-mentor-blue"
                 />
@@ -184,6 +184,9 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
+              {/* Daily Progress - New Component */}
+              <DailyProgress />
+              
               {/* Recommended Career Paths */}
               <div className="mentor-card">
                 <h3 className="font-semibold mb-4">Recommended Career Paths</h3>
