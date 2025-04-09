@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { BookOpen, Brain, Calendar, ChevronLeft, ChevronRight, Home, LineChart, MessageSquare, User } from "lucide-react";
+import { BookOpen, Brain, Calendar, ChevronLeft, ChevronRight, Home, LineChart, MessageSquare, User, FileText, Code, BookOpenCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +45,7 @@ const Sidebar = ({ className }: SidebarProps) => {
           <NavItem icon={Brain} label="Skills Analysis" to="/skills" collapsed={collapsed} />
           <NavItem icon={Calendar} label="Weekly Goals" to="/goals" collapsed={collapsed} />
           <NavItem icon={BookOpen} label="Resources" to="/resources" collapsed={collapsed} />
+          <NavItem icon={BookOpenCheck} label="Mentor Resources" to="/mentor-resources" collapsed={collapsed} />
           <NavItem icon={MessageSquare} label="Mentor Chat" to="/chat" collapsed={collapsed} />
         </nav>
       </div>
