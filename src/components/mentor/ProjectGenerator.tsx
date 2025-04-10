@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Loader2, Code, Github, ExternalLink, FileText } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectIdea {
   title: string;
@@ -22,8 +23,15 @@ interface ProjectIdea {
   }[];
 }
 
-const EXAMPLE_PROJECTS: Record<string, ProjectIdea[]> = {
-  "web-development": [
+const getBaseProjectIdeas = (
+  interests: string, 
+  technologies: string[], 
+  skillLevel: string
+): ProjectIdea[] => {
+  const interestsLower = interests.toLowerCase();
+  const keywords = interestsLower.split(/[,\s]+/).filter(Boolean);
+  
+  let baseProjects: ProjectIdea[] = [
     {
       title: "Personal Task Manager",
       description: "A web application that helps users manage their tasks with features like prioritization, due dates, and categories.",
@@ -89,9 +97,7 @@ const EXAMPLE_PROJECTS: Record<string, ProjectIdea[]> = {
           type: "example"
         }
       ]
-    }
-  ],
-  "data-science": [
+    },
     {
       title: "Customer Segmentation Analysis",
       description: "Analyze customer data to identify distinct segments for targeted marketing strategies.",
@@ -126,41 +132,6 @@ const EXAMPLE_PROJECTS: Record<string, ProjectIdea[]> = {
       ]
     },
     {
-      title: "Predictive Maintenance Model",
-      description: "Build a machine learning model to predict equipment failures before they occur.",
-      features: [
-        "Time-series data analysis",
-        "Feature extraction from sensor data",
-        "Anomaly detection algorithms",
-        "Classification model development",
-        "Performance evaluation metrics",
-        "Deployment considerations"
-      ],
-      technologies: ["Python", "Pandas", "NumPy", "Scikit-learn", "TensorFlow/Keras"],
-      difficulty: "Advanced",
-      timeEstimate: "3-4 weeks",
-      learningGoals: [
-        "Time-series analysis techniques",
-        "Imbalanced data handling",
-        "Model evaluation for business impact",
-        "Machine learning model interpretability"
-      ],
-      additionalResources: [
-        {
-          title: "Machine Learning for Predictive Maintenance",
-          url: "https://towardsdatascience.com/machine-learning-for-predictive-maintenance-3f9607d6d6d0",
-          type: "tutorial"
-        },
-        {
-          title: "NASA Turbofan Engine Degradation Dataset",
-          url: "https://www.kaggle.com/datasets/behrad3d/nasa-cmaps",
-          type: "example"
-        }
-      ]
-    }
-  ],
-  "mobile-development": [
-    {
       title: "Fitness Tracking App",
       description: "A mobile application that helps users track their workouts, set goals, and monitor progress.",
       features: [
@@ -192,38 +163,97 @@ const EXAMPLE_PROJECTS: Record<string, ProjectIdea[]> = {
           type: "tutorial"
         }
       ]
+    },
+    {
+      title: "Personal Portfolio Website",
+      description: "A responsive portfolio website to showcase your projects and skills.",
+      features: [
+        "Responsive design",
+        "Projects showcase",
+        "Skills section",
+        "Contact form",
+        "About me section",
+        "Dark/light mode toggle"
+      ],
+      technologies: ["HTML", "CSS", "JavaScript", "React"],
+      difficulty: "Beginner",
+      timeEstimate: "1-2 weeks",
+      learningGoals: [
+        "Modern CSS techniques",
+        "Responsive design principles",
+        "Form handling",
+        "React state management"
+      ],
+      additionalResources: [
+        {
+          title: "How to Build a Portfolio Website with React",
+          url: "https://www.freecodecamp.org/news/portfolio-website-react/",
+          type: "tutorial"
+        },
+        {
+          title: "Modern CSS Techniques",
+          url: "https://developer.mozilla.org/en-US/docs/Web/CSS",
+          type: "documentation"
+        }
+      ]
     }
-  ]
-};
+  ];
 
-const getProjectDomain = (interests: string): keyof typeof EXAMPLE_PROJECTS => {
-  const interestsLower = interests.toLowerCase();
-  
-  if (interestsLower.includes("web") || interestsLower.includes("frontend") || interestsLower.includes("react")) {
-    return "web-development";
+  if (technologies && technologies.length > 0) {
+    baseProjects = baseProjects.map(project => {
+      const combinedTech = [...new Set([...project.technologies.slice(0, 2), ...technologies.slice(0, 3)])];
+      return {...project, technologies: combinedTech};
+    });
   }
-  
-  if (interestsLower.includes("data") || interestsLower.includes("python") || interestsLower.includes("machine learning")) {
-    return "data-science";
+
+  let matchedProjects = baseProjects;
+  if (interests && interests.trim()) {
+    matchedProjects = baseProjects.filter(project => {
+      const projectText = (project.title + " " + project.description).toLowerCase();
+      return keywords.some(keyword => 
+        keyword.length > 3 && projectText.includes(keyword)
+      );
+    });
+
+    if (matchedProjects.length === 0) {
+      matchedProjects = baseProjects;
+    }
   }
-  
-  if (interestsLower.includes("mobile") || interestsLower.includes("app") || interestsLower.includes("android") || interestsLower.includes("ios")) {
-    return "mobile-development";
-  }
-  
-  return "web-development";
+
+  return matchedProjects.map(project => {
+    let adjustedProject = {...project};
+    
+    if (skillLevel === "beginner") {
+      adjustedProject.difficulty = "Beginner";
+      adjustedProject.features = project.features.slice(0, 4);
+      adjustedProject.timeEstimate = "2-3 weeks";
+    } else if (skillLevel === "advanced") {
+      adjustedProject.difficulty = "Advanced";
+      adjustedProject.features = [...project.features, "Advanced analytics", "Performance optimization"];
+      adjustedProject.timeEstimate = "3-4 weeks";
+    }
+    
+    return adjustedProject;
+  });
 };
 
 interface ProjectGeneratorProps {
   initialInterests?: string;
   initialSkillLevel?: string;
+  initialTechnologies?: string[];
 }
 
-const ProjectGenerator = ({ initialInterests = "", initialSkillLevel = "beginner" }: ProjectGeneratorProps) => {
+const ProjectGenerator = ({ 
+  initialInterests = "", 
+  initialSkillLevel = "beginner",
+  initialTechnologies = [] 
+}: ProjectGeneratorProps) => {
+  const navigate = useNavigate();
   const [interests, setInterests] = useState(initialInterests);
   const [skillLevel, setSkillLevel] = useState(initialSkillLevel);
   const [isGenerating, setIsGenerating] = useState(false);
   const [projectIdeas, setProjectIdeas] = useState<ProjectIdea[]>([]);
+  const [technologies] = useState<string[]>(initialTechnologies);
 
   useEffect(() => {
     if (initialInterests) {
@@ -247,28 +277,27 @@ const ProjectGenerator = ({ initialInterests = "", initialSkillLevel = "beginner
     setIsGenerating(true);
     
     setTimeout(() => {
-      const domain = getProjectDomain(interests);
-      let ideas = EXAMPLE_PROJECTS[domain] || EXAMPLE_PROJECTS["web-development"];
+      const generatedIdeas = getBaseProjectIdeas(
+        interests,
+        technologies,
+        skillLevel
+      ).slice(0, 3);
       
-      if (skillLevel === "beginner") {
-        ideas = ideas.filter(idea => idea.difficulty.includes("Beginner"));
-        if (ideas.length === 0) {
-          ideas = EXAMPLE_PROJECTS[domain].map(idea => ({
-            ...idea,
-            difficulty: "Beginner",
-            features: idea.features.slice(0, 3),
-            timeEstimate: "1-2 weeks"
-          })).slice(0, 2);
-        }
-      }
+      setProjectIdeas(generatedIdeas);
       
-      setProjectIdeas(ideas);
       toast({
         title: "Project ideas generated!",
-        description: `Found ${ideas.length} projects matching your interests`
+        description: `Found ${generatedIdeas.length} projects matching your interests`
       });
       setIsGenerating(false);
     }, 1500);
+  };
+
+  const handleSaveProject = (project: ProjectIdea) => {
+    toast({
+      title: "Project saved!",
+      description: `"${project.title}" has been saved to your projects`
+    });
   };
 
   return (
@@ -394,7 +423,7 @@ const ProjectGenerator = ({ initialInterests = "", initialSkillLevel = "beginner
                   )}
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => handleSaveProject(project)}>
                     Save This Project Idea
                   </Button>
                 </CardFooter>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,119 +42,143 @@ const ResumeGenerator = ({
     }
   }, [initialJobTitle, initialSkills, initialTechnologies]);
 
-  const resumeTemplates = {
-    "entry-level": `# JANE DOE
-*New York, NY • (555) 123-4567 • jane.doe@email.com • linkedin.com/in/janedoe • github.com/janedoe*
+  const generateResumeContent = (
+    jobTitle: string,
+    experience: string,
+    skills: string
+  ) => {
+    // Parse skills from the prompt or use default ones
+    const userSkills = skills
+      ? skills.split(/[,;]/).map(s => s.trim()).filter(Boolean)
+      : ['Problem-solving', 'Team Collaboration', 'Communication'];
+
+    // Default technical skills based on job title
+    let technicalSkills: string[] = [];
+    
+    if (jobTitle.toLowerCase().includes('data')) {
+      technicalSkills = ['Python', 'SQL', 'Excel', 'Data Visualization'];
+    } else if (jobTitle.toLowerCase().includes('web') || jobTitle.toLowerCase().includes('frontend') || jobTitle.toLowerCase().includes('developer')) {
+      technicalSkills = ['JavaScript', 'React', 'HTML', 'CSS', 'Git'];
+    } else if (jobTitle.toLowerCase().includes('design')) {
+      technicalSkills = ['Figma', 'Adobe XD', 'Sketch', 'UI/UX Principles'];
+    } else {
+      technicalSkills = ['Microsoft Office', 'Data Analysis', 'Project Management'];
+    }
+    
+    // Extract specific skills from user input if mentioned
+    const skillsLower = skills.toLowerCase();
+    const skillKeywords = [
+      {keyword: 'python', skill: 'Python'}, 
+      {keyword: 'react', skill: 'React'},
+      {keyword: 'javascript', skill: 'JavaScript'},
+      {keyword: 'typescript', skill: 'TypeScript'},
+      {keyword: 'java', skill: 'Java'},
+      {keyword: 'c#', skill: 'C#'},
+      {keyword: 'node', skill: 'Node.js'},
+      {keyword: 'sql', skill: 'SQL'},
+      {keyword: 'mongo', skill: 'MongoDB'},
+      {keyword: 'aws', skill: 'AWS'},
+      {keyword: 'azure', skill: 'Azure'},
+      {keyword: 'docker', skill: 'Docker'},
+      {keyword: 'kubernetes', skill: 'Kubernetes'},
+      {keyword: 'figma', skill: 'Figma'},
+      {keyword: 'photoshop', skill: 'Adobe Photoshop'},
+      {keyword: 'illustrator', skill: 'Adobe Illustrator'},
+    ];
+    
+    skillKeywords.forEach(({keyword, skill}) => {
+      if (skillsLower.includes(keyword) && !technicalSkills.includes(skill)) {
+        technicalSkills.push(skill);
+      }
+    });
+
+    const name = "YOUR NAME";
+
+    const baseTemplate = `# ${name}
+*Location • Phone • email@example.com • linkedin.com/in/yourusername • github.com/yourusername*
 
 ## SUMMARY
-Detail-oriented Junior [ROLE] with hands-on experience in relevant technologies through academic projects and internships. Skilled in problem-solving and eager to apply technical knowledge in a collaborative environment.
+${experience === 'entry-level' 
+  ? `Detail-oriented ${jobTitle} with hands-on experience in relevant technologies through academic projects and internships. Skilled in problem-solving and eager to apply technical knowledge in a collaborative environment.`
+  : experience === 'mid-level'
+    ? `Results-driven ${jobTitle} with 4+ years of experience delivering impactful solutions. Proven track record of optimizing processes and leveraging data-driven insights to drive business growth.`
+    : `Strategic ${jobTitle} leader with 8+ years of experience transforming business operations through data-driven initiatives. Expertise in building and leading high-performing teams and delivering solutions that drive multimillion-dollar revenue growth.`
+}
 
 ## SKILLS
-**Technical:** Python, SQL, Excel, Data Visualization, Statistical Analysis
-**Soft Skills:** Problem-solving, Team Collaboration, Communication, Critical Thinking
+**Technical:** ${technicalSkills.slice(0, 5).join(', ')}
+**Soft Skills:** ${userSkills.slice(0, 4).join(', ')}
 
 ## EXPERIENCE
-**Data Analyst Intern | TechStart Inc., New York, NY | June 2023 - August 2023**
-- Analyzed customer datasets with over 100,000 records, improving data integrity by 25%
-- Developed visualizations that helped identify key customer segments
-- Collaborated with senior analysts to build a customer churn prediction model
-- Presented findings to non-technical stakeholders, translating complex results into actionable recommendations
+**${jobTitle} ${experience === 'entry-level' ? 'Intern' : experience === 'mid-level' ? '' : 'Senior'} | ${experience === 'entry-level' ? 'Company Name' : 'Tech Solutions Inc.'}, Location | ${experience === 'entry-level' ? 'June 2023 - August 2023' : 'January 2021 - Present'}**
+- ${experience === 'entry-level' 
+    ? `Assisted in developing and maintaining ${jobTitle.toLowerCase().includes('data') ? 'data pipelines' : 'web applications'}`
+    : experience === 'mid-level'
+      ? `Led development of ${jobTitle.toLowerCase().includes('data') ? 'data analysis solutions' : 'key product features'}`
+      : `Managed a team of professionals working on ${jobTitle.toLowerCase().includes('data') ? 'enterprise data solutions' : 'mission-critical applications'}`
+  }
+- ${jobTitle.toLowerCase().includes('data') 
+    ? 'Analyzed datasets to extract actionable insights and created visualizations' 
+    : jobTitle.toLowerCase().includes('develop')
+      ? 'Implemented new features and fixed bugs using modern development practices'
+      : 'Collaborated with stakeholders to understand requirements and deliver solutions'
+  }
+- ${experience === 'entry-level'
+    ? 'Participated in team meetings and contributed ideas to project development'
+    : experience === 'mid-level'
+      ? 'Mentored junior team members and conducted code reviews'
+      : 'Developed strategic roadmaps and secured budget for key initiatives'
+  }
+
+${experience !== 'entry-level' ? `**${jobTitle} ${experience === 'mid-level' ? 'Associate' : ''} | Previous Company, Location | ${experience === 'mid-level' ? 'March 2019 - December 2020' : 'June 2018 - December 2020'}**
+- Developed and maintained ${jobTitle.toLowerCase().includes('data') ? 'data models' : 'application features'}
+- Collaborated with cross-functional teams to implement solutions
+- ${experience === 'mid-level' 
+    ? 'Optimized processes resulting in significant time savings' 
+    : 'Led initiatives that resulted in cost savings and improved performance'
+  }
+` : ''}
 
 ## PROJECTS
-**Customer Segmentation Analysis | Python, Scikit-learn, Matplotlib | March 2023**
-- Analyzed e-commerce dataset using K-means clustering
-- Identified distinct customer segments based on purchasing behavior
-- Created interactive visualizations to communicate findings
-- Recommended targeted marketing strategies for each segment
+**${jobTitle.toLowerCase().includes('data') ? 'Data Analysis Dashboard' : jobTitle.toLowerCase().includes('develop') ? 'Web Application' : 'Portfolio Project'} | ${technicalSkills.slice(0, 3).join(', ')} | 2023**
+- ${jobTitle.toLowerCase().includes('data')
+    ? 'Created interactive dashboards to visualize key metrics'
+    : jobTitle.toLowerCase().includes('develop')
+      ? 'Developed a responsive web application with modern UI components'
+      : 'Designed and implemented a comprehensive project showcasing relevant skills'
+  }
+- Implemented best practices for code organization and documentation
+- Collaborated with team members to deliver high-quality results
+${experience !== 'entry-level' ? `- ${jobTitle.toLowerCase().includes('data') ? 'Applied advanced statistical methods to derive insights' : 'Optimized performance and ensured cross-browser compatibility'}` : ''}
 
-**Data Dashboard | Python, Pandas, Plotly | January 2023**
-- Built an interactive dashboard to visualize sales metrics
-- Engineered features from time-series data
-- Implemented filters and drill-down capabilities
-- Documented process and findings in GitHub repository
-
-## EDUCATION
-**Bachelor of Science in Computer Science | University of New York | Expected May 2024**
-*Relevant Coursework:* Data Structures & Algorithms, Database Systems, Statistics, Programming Fundamentals
-*GPA:* 3.8/4.0`,
-
-    "mid-level": `# JOHN SMITH
-*San Francisco, CA • (555) 987-6543 • john.smith@email.com • linkedin.com/in/johnsmith • github.com/johnsmith*
-
-## SUMMARY
-Results-driven [ROLE] with 4+ years of experience delivering impactful solutions across finance and e-commerce sectors. Proven track record of optimizing processes and leveraging data-driven insights to drive business growth.
-
-## SKILLS
-**Technical:** Python, SQL, R, Tableau, PowerBI, Cloud Platforms (AWS/Azure), ETL Pipelines
-**Domain Knowledge:** Financial Analysis, Customer Analytics, Process Optimization, Data Governance
-
-## EXPERIENCE
-**Senior Data Analyst | FinTech Solutions, San Francisco, CA | July 2021 - Present**
-- Lead a team of 3 analysts in developing comprehensive reporting systems that increased decision-making efficiency by 40%
-- Implemented automated ETL processes reducing manual reporting time by 15 hours weekly
-- Developed predictive models for customer churn with 85% accuracy, contributing to a 12% reduction in attrition
-- Collaborate with cross-functional teams to optimize data architecture and establish governance practices
-
-**Data Analyst | E-commerce Platform Inc., Oakland, CA | August 2019 - June 2021**
-- Created interactive dashboards tracking KPIs across marketing, sales, and operations
-- Performed A/B testing on website features, identifying optimizations that increased conversion by 18%
-- Designed and maintained SQL databases for efficient storage and retrieval of customer and transaction data
-- Trained junior team members on data analysis methodologies and best practices
-
-## PROJECTS
-**Financial Forecasting System | Python, Prophet, AWS | 2022**
-- Developed time-series models to forecast financial metrics with 92% accuracy
-- Implemented cloud-based solution for automated daily predictions
-- Created executive dashboard for real-time financial monitoring
-- Reduced forecast preparation time from 3 days to 4 hours
+**Personal Project | ${technicalSkills.slice(0, 2).join(', ')} | 2022**
+- ${jobTitle.toLowerCase().includes('data')
+    ? 'Built a predictive model to solve a specific problem domain'
+    : jobTitle.toLowerCase().includes('develop')
+      ? 'Created a feature-rich application demonstrating technical skills'
+      : 'Implemented a solution addressing a specific challenge in the field'
+  }
+- Documented the process and results in a comprehensive manner
+- Published code and documentation on GitHub repository
 
 ## EDUCATION
-**Master of Science in Data Science | California University | 2019**
-**Bachelor of Science in Statistics | State University | 2017**
+**Bachelor's Degree in ${
+  jobTitle.toLowerCase().includes('data') 
+    ? 'Data Science' 
+    : jobTitle.toLowerCase().includes('develop') 
+      ? 'Computer Science' 
+      : 'Business Administration'
+} | University Name | ${experience === 'entry-level' ? 'Expected 2024' : '2020'}**
 
-## CERTIFICATIONS
-- AWS Certified Data Analytics Specialty (2022)
-- Tableau Desktop Specialist (2021)`,
+${experience !== 'entry-level' ? '## CERTIFICATIONS\n- ' + 
+  (jobTitle.toLowerCase().includes('data') 
+    ? 'Data Science Professional Certification'
+    : jobTitle.toLowerCase().includes('develop')
+      ? 'Full-Stack Developer Certification'
+      : 'Project Management Professional (PMP)'
+  ) + ' (2022)' : ''}`;
 
-    "senior-level": `# ROBERT JOHNSON
-*Seattle, WA • (555) 234-5678 • robert.johnson@email.com • linkedin.com/in/robertjohnson*
-
-## SUMMARY
-Strategic [ROLE] leader with 8+ years of experience transforming business operations through data-driven initiatives. Expertise in building and leading high-performing teams, implementing enterprise-wide data strategies, and delivering solutions that drive multimillion-dollar revenue growth.
-
-## SKILLS
-**Leadership:** Team Management, Strategic Planning, Cross-functional Collaboration, Mentorship
-**Technical:** Advanced Analytics, Machine Learning, Data Architecture, Cloud Infrastructure, Enterprise Data Systems
-**Business:** Executive Communication, Stakeholder Management, ROI Analysis, Change Management
-
-## EXPERIENCE
-**Director of Data Science | Enterprise Solutions Corp., Seattle, WA | 2020 - Present**
-- Lead a department of 15 data professionals, establishing governance frameworks that improved data quality by 65%
-- Spearheaded implementation of ML operations platform, reducing model deployment time from weeks to days
-- Developed enterprise data strategy resulting in $3.2M annual cost savings through process optimization
-- Advise C-suite on data initiatives, securing $1.8M in additional funding for strategic projects
-
-**Senior Data Scientist Manager | Tech Innovations Inc., Portland, OR | 2017 - 2020**
-- Built and led team of 8 data scientists working on predictive analytics solutions across multiple business units
-- Architected cloud-based data platform that reduced processing time by 75% while handling 3x more data
-- Designed customer lifetime value models that increased marketing ROI by 32%
-- Established best practices for reproducible research and analytics, improving team productivity by 40%
-
-**Lead Data Scientist | Digital Analytics Co., San Jose, CA | 2015 - 2017**
-- Managed portfolio of analytics projects with combined annual impact of $4.5M
-- Developed NLP algorithms for customer feedback analysis, identifying opportunities that increased CSAT by 18%
-- Created automated anomaly detection system that prevented $800K in potential fraud
-- Mentored 5 junior data scientists, with 3 receiving promotions within 18 months
-
-## EDUCATION
-**MBA with Data Analytics Specialization | Stanford University | 2015**
-**Master of Science in Computer Science | University of Washington | 2013**
-**Bachelor of Science in Mathematics | University of California | 2011**
-
-## CERTIFICATIONS
-- Google Cloud Professional Data Engineer
-- Microsoft Certified: Azure Data Scientist Associate
-- Certified Scrum Master (CSM)`
+    return baseTemplate;
   };
 
   const handleGenerateResume = () => {
@@ -169,33 +194,20 @@ Strategic [ROLE] leader with 8+ years of experience transforming business operat
     setIsGenerating(true);
     
     setTimeout(() => {
-      let template = resumeTemplates[experience];
+      // Generate resume based on user input
+      const generatedResume = generateResumeContent(
+        jobTitle || "Professional",
+        experience,
+        prompt
+      );
       
-      if (jobTitle) {
-        template = template.replace(/\[ROLE\]/g, jobTitle);
-      } else {
-        const defaultTitle = prompt.toLowerCase().includes("data") 
-          ? "Data Analyst" 
-          : prompt.toLowerCase().includes("develop") 
-            ? "Software Developer" 
-            : "Business Analyst";
-        
-        template = template.replace(/\[ROLE\]/g, defaultTitle);
-      }
+      setResumeContent(generatedResume);
       
-      if (prompt.includes("python") || prompt.includes("machine learning")) {
-        template = template.replace("Python, SQL", "Python, Machine Learning, SQL");
-      }
-      
-      if (prompt.includes("react") || prompt.includes("frontend")) {
-        template = template.replace("Python, SQL", "JavaScript, React, HTML, CSS");
-      }
-      
-      setResumeContent(template);
       toast({
         title: "Resume generated!",
         description: "Your ATS-optimized resume is ready to view and download"
       });
+      
       setIsGenerating(false);
     }, 2000);
   };
