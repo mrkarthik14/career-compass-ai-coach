@@ -59,7 +59,8 @@ const Login = () => {
         description: "Welcome back to CareerCompass!",
       });
       
-      navigate("/");
+      // Redirect to dashboard instead of home page
+      navigate("/dashboard");
     }, 1500);
   };
 

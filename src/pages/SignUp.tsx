@@ -69,7 +69,8 @@ const SignUp = () => {
         description: "Welcome to CareerCompass! Let's start your career journey.",
       });
       
-      navigate("/");
+      // Redirect to dashboard instead of home page
+      navigate("/dashboard");
     }, 1500);
   };
 
