@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -197,7 +196,6 @@ const EXAMPLE_PROJECTS: Record<string, ProjectIdea[]> = {
   ]
 };
 
-// Helper function to match interests to project domain
 const getProjectDomain = (interests: string): keyof typeof EXAMPLE_PROJECTS => {
   const interestsLower = interests.toLowerCase();
   
@@ -213,15 +211,28 @@ const getProjectDomain = (interests: string): keyof typeof EXAMPLE_PROJECTS => {
     return "mobile-development";
   }
   
-  // Default to web development if no match
   return "web-development";
 };
 
-const ProjectGenerator = () => {
-  const [interests, setInterests] = useState("");
-  const [skillLevel, setSkillLevel] = useState("beginner");
+interface ProjectGeneratorProps {
+  initialInterests?: string;
+  initialSkillLevel?: string;
+}
+
+const ProjectGenerator = ({ initialInterests = "", initialSkillLevel = "beginner" }: ProjectGeneratorProps) => {
+  const [interests, setInterests] = useState(initialInterests);
+  const [skillLevel, setSkillLevel] = useState(initialSkillLevel);
   const [isGenerating, setIsGenerating] = useState(false);
   const [projectIdeas, setProjectIdeas] = useState<ProjectIdea[]>([]);
+
+  useEffect(() => {
+    if (initialInterests) {
+      setInterests(initialInterests);
+    }
+    if (initialSkillLevel) {
+      setSkillLevel(initialSkillLevel);
+    }
+  }, [initialInterests, initialSkillLevel]);
 
   const handleGenerateProjects = () => {
     if (!interests.trim()) {
@@ -235,17 +246,13 @@ const ProjectGenerator = () => {
     
     setIsGenerating(true);
     
-    // Simulate API call
     setTimeout(() => {
       const domain = getProjectDomain(interests);
       let ideas = EXAMPLE_PROJECTS[domain] || EXAMPLE_PROJECTS["web-development"];
       
-      // Adjust based on skill level
       if (skillLevel === "beginner") {
-        // Filter or modify for beginners
         ideas = ideas.filter(idea => idea.difficulty.includes("Beginner"));
         if (ideas.length === 0) {
-          // If no beginner projects, simplify an intermediate one
           ideas = EXAMPLE_PROJECTS[domain].map(idea => ({
             ...idea,
             difficulty: "Beginner",

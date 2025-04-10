@@ -6,10 +6,11 @@ import Header from "@/components/Header";
 import RoadmapGenerator from "@/components/mentor/RoadmapGenerator";
 import PortfolioGenerator from "@/components/mentor/PortfolioGenerator";
 import ProjectGenerator from "@/components/mentor/ProjectGenerator";
+import CareerMentorHub from "@/components/mentor/CareerMentorHub";
 import { BookOpen, Code, FileText } from "lucide-react";
 
 const MentorResources = () => {
-  const [activeTab, setActiveTab] = useState("roadmap");
+  const [activeTab, setActiveTab] = useState("hub");
 
   return (
     <div className="flex h-screen">
@@ -25,7 +26,10 @@ const MentorResources = () => {
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="hub" className="flex items-center gap-2">
+                <BookOpen size={16} /> Career Hub
+              </TabsTrigger>
               <TabsTrigger value="roadmap" className="flex items-center gap-2">
                 <BookOpen size={16} /> Learning Roadmaps
               </TabsTrigger>
@@ -36,6 +40,10 @@ const MentorResources = () => {
                 <Code size={16} /> Project Generator
               </TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="hub">
+              <CareerMentorHub />
+            </TabsContent>
             
             <TabsContent value="roadmap">
               <RoadmapGenerator />

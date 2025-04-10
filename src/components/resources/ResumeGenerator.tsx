@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,14 +9,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Copy, Download, FileText } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
-const ResumeGenerator = () => {
+interface ResumeGeneratorProps {
+  initialJobTitle?: string;
+  initialSkills?: string;
+  initialTechnologies?: string;
+  initialExperience?: string;
+}
+
+const ResumeGenerator = ({ 
+  initialJobTitle = "", 
+  initialSkills = "",
+  initialTechnologies = "",
+  initialExperience = "entry-level"
+}: ResumeGeneratorProps) => {
   const [prompt, setPrompt] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
-  const [experience, setExperience] = useState("entry-level");
+  const [jobTitle, setJobTitle] = useState(initialJobTitle);
+  const [experience, setExperience] = useState(initialExperience);
   const [isGenerating, setIsGenerating] = useState(false);
   const [resumeContent, setResumeContent] = useState("");
 
-  // Example resume templates based on experience level
+  useEffect(() => {
+    if (initialJobTitle) {
+      setJobTitle(initialJobTitle);
+    }
+    
+    if (initialSkills || initialTechnologies) {
+      const combinedSkills = [initialSkills, initialTechnologies].filter(Boolean).join(", ");
+      if (combinedSkills) {
+        setPrompt(`I have experience with: ${combinedSkills}`);
+      }
+    }
+  }, [initialJobTitle, initialSkills, initialTechnologies]);
+
   const resumeTemplates = {
     "entry-level": `# JANE DOE
 *New York, NY • (555) 123-4567 • jane.doe@email.com • linkedin.com/in/janedoe • github.com/janedoe*
@@ -145,15 +168,12 @@ Strategic [ROLE] leader with 8+ years of experience transforming business operat
     
     setIsGenerating(true);
     
-    // Simulate API call with timeout
     setTimeout(() => {
       let template = resumeTemplates[experience];
       
-      // Replace placeholders
       if (jobTitle) {
         template = template.replace(/\[ROLE\]/g, jobTitle);
       } else {
-        // If no job title provided, use a default based on the prompt
         const defaultTitle = prompt.toLowerCase().includes("data") 
           ? "Data Analyst" 
           : prompt.toLowerCase().includes("develop") 
@@ -163,7 +183,6 @@ Strategic [ROLE] leader with 8+ years of experience transforming business operat
         template = template.replace(/\[ROLE\]/g, defaultTitle);
       }
       
-      // Add some customization based on the prompt if provided
       if (prompt.includes("python") || prompt.includes("machine learning")) {
         template = template.replace("Python, SQL", "Python, Machine Learning, SQL");
       }

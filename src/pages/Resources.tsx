@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code, FileText, MessageSquare, Video, Mic, Loader2 } from "lucide-react";
@@ -6,6 +7,8 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import InterviewView from "@/components/interview/InterviewView";

@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +8,35 @@ import { Label } from "@/components/ui/label";
 import { Plus, X, Loader2, Copy, Download } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
-const PortfolioGenerator = () => {
-  const [goal, setGoal] = useState("");
-  const [projects, setProjects] = useState<string[]>([""]);
-  const [skills, setSkills] = useState<string[]>([""]);
+interface PortfolioGeneratorProps {
+  initialGoal?: string;
+  initialProjects?: string[];
+  initialSkills?: string[];
+}
+
+const PortfolioGenerator = ({ 
+  initialGoal = "", 
+  initialProjects = [], 
+  initialSkills = [] 
+}: PortfolioGeneratorProps) => {
+  const [goal, setGoal] = useState(initialGoal);
+  const [projects, setProjects] = useState<string[]>(initialProjects.length > 0 ? initialProjects : [""]);
+  const [skills, setSkills] = useState<string[]>(initialSkills.length > 0 ? initialSkills : [""]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [portfolioTemplate, setPortfolioTemplate] = useState("");
+
+  useEffect(() => {
+    // Update state if props change
+    if (initialGoal) {
+      setGoal(initialGoal);
+    }
+    if (initialProjects.length > 0) {
+      setProjects(initialProjects);
+    }
+    if (initialSkills.length > 0) {
+      setSkills(initialSkills);
+    }
+  }, [initialGoal, initialProjects, initialSkills]);
 
   const addProject = () => {
     setProjects([...projects, ""]);
