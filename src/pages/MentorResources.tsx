@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import RoadmapGenerator from "@/components/mentor/RoadmapGenerator";
 import PortfolioGenerator from "@/components/mentor/PortfolioGenerator";
+import ProjectGenerator from "@/components/mentor/ProjectGenerator";
 import { BookOpen, Code, FileText } from "lucide-react";
 
 const MentorResources = () => {
@@ -45,18 +46,7 @@ const MentorResources = () => {
             </TabsContent>
             
             <TabsContent value="projects">
-              {/* We'll reuse the project generator from the Resources page */}
-              <div className="p-8 text-center bg-gray-100 rounded-xl">
-                <h3 className="text-xl font-medium mb-4">Project Generator</h3>
-                <p className="text-gray-600 mb-4">
-                  Generate custom project ideas based on your skills and interests.
-                </p>
-                <p>
-                  <a href="/resources" className="text-mentor-purple font-medium">
-                    Visit the Resources page to use the Project Generator →
-                  </a>
-                </p>
-              </div>
+              <ProjectGenerator />
             </TabsContent>
           </Tabs>
         </div>

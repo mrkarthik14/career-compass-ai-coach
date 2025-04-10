@@ -1,171 +1,46 @@
-
 import { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Code, FileText, MessageSquare, Video, Mic, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import InterviewView from "@/components/interview/InterviewView";
 import { ProjectResult } from "@/components/resources/ProjectResult";
 import { ResumeResult } from "@/components/resources/ResumeResult";
+import ProjectGenerator from "@/components/mentor/ProjectGenerator";
+import ResumeGenerator from "@/components/resources/ResumeGenerator";
 
 const Resources = () => {
   const navigate = useNavigate();
-  const [projectInput, setProjectInput] = useState("");
-  const [resumeInput, setResumeInput] = useState("");
   const [interviewInput, setInterviewInput] = useState("");
-  
-  const [projectResponse, setProjectResponse] = useState("");
-  const [resumeResponse, setResumeResponse] = useState("");
   const [interviewResponse, setInterviewResponse] = useState("");
   const [isInterviewActive, setIsInterviewActive] = useState(false);
-  
-  const [isGeneratingProject, setIsGeneratingProject] = useState(false);
-  const [isGeneratingResume, setIsGeneratingResume] = useState(false);
   const [isGeneratingInterview, setIsGeneratingInterview] = useState(false);
-  
   const [interviewSessionType, setInterviewSessionType] = useState("text");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const mockInterviewQuestions = [
-    "Tell me about your background and why you're interested in this product analyst role.",
+    "Tell me about your background and why you're interested in this role.",
     "How would you approach analyzing the performance of a new feature we just launched?",
     "A key metric has dropped 15% week-over-week. How would you investigate this?",
     "Describe a situation where you had to communicate complex data findings to non-technical stakeholders.",
     "How would you determine if a correlation between two metrics is actually causal?"
   ];
 
-  const handleProjectGeneration = () => {
-    setIsGeneratingProject(true);
-    setTimeout(() => {
-      setProjectResponse(`
-# Project Ideas for Healthcare Analytics
-
-## 1. Patient Readmission Predictor
-**Description:** Build a machine learning model to predict which patients are likely to be readmitted within 30 days of discharge.
-
-**Tools/Technologies:**
-- Python (pandas, scikit-learn, matplotlib)
-- SQL for data querying
-- Jupyter Notebook
-- GitHub for version control
-
-**Learning Outcomes:**
-- Data preprocessing for healthcare records
-- Classification algorithms
-- Feature engineering with domain knowledge
-- Model evaluation and healthcare metrics
-
-**Real-world Context:** Similar systems are used by hospitals to allocate post-discharge resources and improve care coordination.
-
-**Difficulty:** Intermediate
-
-## 2. Healthcare Resource Allocation Dashboard
-**Description:** Create an interactive dashboard to visualize hospital resource usage and optimize staff scheduling.
-
-**Tools/Technologies:**
-- Python (pandas)
-- SQL for data querying
-- Dash or Streamlit for the dashboard
-- Plotly for interactive visualizations
-
-**Learning Outcomes:**
-- Database design and SQL optimization
-- Time-series analysis
-- Dashboard development
-- Data storytelling
-
-**Real-world Context:** Healthcare administrators use similar tools to make staffing and resource allocation decisions.
-
-**Difficulty:** Intermediate
-
-## 3. Medical Text Classification System
-**Description:** Develop a natural language processing system to categorize medical notes by diagnosis, severity, or department.
-
-**Tools/Technologies:**
-- Python (NLTK, spaCy, scikit-learn)
-- SQL for storing processed data
-- Vader or TextBlob for sentiment analysis
-
-**Learning Outcomes:**
-- Text preprocessing techniques
-- Healthcare terminology handling
-- Document classification algorithms
-- Working with unstructured data
-
-**Real-world Context:** Medical coders and researchers use similar systems to organize and analyze clinical notes at scale.
-
-**Difficulty:** Advanced
-      `);
-      toast({
-        title: "Project ideas generated!",
-        description: "You can now view your customized project suggestions",
-      });
-      setIsGeneratingProject(false);
-      
-      // This would be replaced with actual API call to generate visual project mock-ups
-      setTimeout(() => {
-        navigate("/resources?tab=generator&view=projectResult");
-      }, 500);
-    }, 1500);
-  };
-
-  const handleResumeGeneration = () => {
-    setIsGeneratingResume(true);
-    setTimeout(() => {
-      setResumeResponse(`
-# JANE DOE
-*New York, NY • (555) 123-4567 • jane.doe@email.com • linkedin.com/in/janedoe • github.com/janedoe*
-
-## SUMMARY
-Detail-oriented Junior Data Scientist with hands-on experience in Python programming and data analytics through academic projects and a startup internship. Skilled in data cleaning, visualization, and building predictive models with a focus on deriving actionable insights. Eager to apply analytical skills and technical knowledge in a collaborative environment to solve real-world business problems.
-
-## SKILLS
-**Technical:** Python (Pandas, NumPy, Scikit-learn, Matplotlib), SQL, Jupyter Notebook, Git/GitHub, Basic Statistics
-**Data Science:** Data Cleaning, Exploratory Data Analysis, Machine Learning (Supervised Learning), Data Visualization
-**Soft Skills:** Problem-solving, Team Collaboration, Communication, Critical Thinking
-
-## EXPERIENCE
-**Data Science Intern | TechStart Inc., New York, NY | June 2023 - August 2023**
-- Cleaned and preprocessed 3 datasets with over 100,000 records, improving data integrity by 25%
-- Developed visualizations that helped identify key customer segments, leading to a 15% increase in targeted marketing efficiency
-- Collaborated with 2 senior data scientists to build a customer churn prediction model achieving 80% accuracy
-- Presented findings to non-technical stakeholders, translating complex results into actionable business recommendations
-
-## PROJECTS
-**Customer Segmentation Analysis | Python, Scikit-learn, Matplotlib | March 2023**
-- Analyzed e-commerce dataset with 50,000+ transactions using K-means clustering
-- Identified 4 distinct customer segments based on purchasing behavior
-- Created interactive visualizations to communicate findings
-- Recommended targeted marketing strategies for each segment
-
-**Predictive Maintenance Tool | Python, Pandas, Scikit-learn | January 2023**
-- Built a binary classification model to predict equipment failures with 78% accuracy
-- Engineered 12 new features from time-series maintenance data
-- Implemented cross-validation to ensure model robustness
-- Documented process and findings in GitHub repository
-
-## EDUCATION
-**Bachelor of Science in Computer Science | University of New York | Expected May 2024**
-*Relevant Coursework:* Data Structures & Algorithms, Database Systems, Statistics for Data Science, Machine Learning Fundamentals
-*GPA:* 3.8/4.0
-      `);
-      toast({
-        title: "Resume generated!",
-        description: "Your ATS-optimized resume is ready to view",
-      });
-      setIsGeneratingResume(false);
-    }, 1500);
-  };
-
   const handleInterviewGeneration = () => {
+    if (!interviewInput.trim()) {
+      toast({
+        title: "Please provide interview details",
+        description: "Tell us what role you're preparing for to generate relevant questions",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsGeneratingInterview(true);
     
     // Simulate camera/mic access for video/voice interviews
@@ -241,12 +116,12 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
 
   // Show project result view if the parameter is set
   if (viewParam === 'projectResult') {
-    return <ProjectResult projectInput={projectInput} onBack={() => navigate("/resources")} />;
+    return <ProjectResult projectInput="" onBack={() => navigate("/resources")} />;
   }
   
   // Show resume result view if the parameter is set
   if (viewParam === 'resumeResult') {
-    return <ResumeResult resumeInput={resumeInput} resumeResponse={resumeResponse} onBack={() => navigate("/resources")} />;
+    return <ResumeResult resumeInput="" resumeResponse="" onBack={() => navigate("/resources")} />;
   }
 
   // If interview is active, show the interview view instead of the regular page
@@ -296,107 +171,11 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
             </TabsList>
             
             <TabsContent value="generator">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Project Generator</CardTitle>
-                  <CardDescription>
-                    Get personalized project ideas based on your career goals, learning level, and interests.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Textarea 
-                        placeholder="I'm learning Python and SQL, and I want to work in the healthcare analytics space. Give me project ideas."
-                        className="min-h-[100px]"
-                        value={projectInput}
-                        onChange={(e) => setProjectInput(e.target.value)}
-                      />
-                    </div>
-                    {projectResponse && (
-                      <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
-                        <pre className="whitespace-pre-wrap font-mono text-sm">{projectResponse}</pre>
-                        
-                        <div className="mt-4 flex justify-center">
-                          <Button 
-                            onClick={() => navigate("/resources?tab=generator&view=projectResult")}
-                            className="mt-2"
-                            variant="outline"
-                          >
-                            View Interactive Project Examples
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={handleProjectGeneration} 
-                    disabled={isGeneratingProject || !projectInput.trim()}
-                    className="w-full"
-                  >
-                    {isGeneratingProject ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating Ideas...
-                      </>
-                    ) : "Generate Project Ideas"}
-                  </Button>
-                </CardFooter>
-              </Card>
+              <ProjectGenerator />
             </TabsContent>
             
             <TabsContent value="resume">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Resume Builder</CardTitle>
-                  <CardDescription>
-                    Create an ATS-optimized resume tailored for a specific job role.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Textarea 
-                        placeholder="Help me build a resume for a junior data scientist role. I've done 2 Python projects and an internship at a startup."
-                        className="min-h-[100px]"
-                        value={resumeInput}
-                        onChange={(e) => setResumeInput(e.target.value)}
-                      />
-                    </div>
-                    {resumeResponse && (
-                      <div className="mt-6 p-4 bg-muted rounded-md overflow-auto max-h-[500px]">
-                        <pre className="whitespace-pre-wrap font-mono text-sm">{resumeResponse}</pre>
-                        
-                        <div className="mt-4 flex justify-center">
-                          <Button 
-                            onClick={() => navigate("/resources?tab=resume&view=resumeResult")}
-                            className="mt-2"
-                            variant="outline"
-                          >
-                            View ATS-Optimized Resume Template
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={handleResumeGeneration} 
-                    disabled={isGeneratingResume || !resumeInput.trim()}
-                    className="w-full"
-                  >
-                    {isGeneratingResume ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Building Resume...
-                      </>
-                    ) : "Build Resume"}
-                  </Button>
-                </CardFooter>
-              </Card>
+              <ResumeGenerator />
             </TabsContent>
             
             <TabsContent value="interview">
@@ -410,8 +189,9 @@ Detail-oriented Junior Data Scientist with hands-on experience in Python program
                 <CardContent>
                   <div className="space-y-4">
                     <div>
+                      <Label>What role are you preparing for?</Label>
                       <Textarea 
-                        placeholder="Give me a mock interview for a product analyst role at a startup. I'm applying next week."
+                        placeholder="e.g., I'm preparing for a Product Analyst role at a tech startup. I have 2 years of experience in data analysis."
                         className="min-h-[100px]"
                         value={interviewInput}
                         onChange={(e) => setInterviewInput(e.target.value)}
