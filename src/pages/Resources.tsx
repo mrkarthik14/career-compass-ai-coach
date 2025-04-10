@@ -1,7 +1,7 @@
 
 import { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Code, FileText, MessageSquare, Video, Mic, Loader2 } from "lucide-react";
+import { Code, FileText, MessageSquare, Video, Mic, Loader2, User } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
@@ -151,34 +151,79 @@ const Resources = () => {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header text="Career Resources" />
+        <Header text="Quick Career Tools" />
         <div className="flex-1 overflow-auto p-6">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold">Career Development Resources</h1>
+            <h1 className="text-2xl font-bold">Quick Career Tools</h1>
             <p className="text-gray-500 mt-2">
-              Use these AI-powered tools to accelerate your career growth, build your portfolio, and prepare for interviews.
+              Quick tools to help with specific career needs. For a personalized experience, visit the 
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-mentor-purple" 
+                onClick={() => navigate("/mentor-resources")}
+              >
+                Career Development Hub
+              </Button>.
             </p>
           </div>
           
-          <Tabs defaultValue={tabParam || "generator"} className="w-full">
+          <Tabs defaultValue={tabParam || "interview"} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
-              <TabsTrigger value="generator" className="flex items-center gap-2">
-                <Code size={16} /> Project Generator
+              <TabsTrigger value="project" className="flex items-center gap-2">
+                <Code size={16} /> Quick Project
               </TabsTrigger>
               <TabsTrigger value="resume" className="flex items-center gap-2">
-                <FileText size={16} /> Resume Builder
+                <FileText size={16} /> Quick Resume
               </TabsTrigger>
               <TabsTrigger value="interview" className="flex items-center gap-2">
-                <MessageSquare size={16} /> Mock Interviewer
+                <MessageSquare size={16} /> Mock Interview
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="generator">
-              <ProjectGenerator />
+            <TabsContent value="project">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Code size={18} /> Quick Project Generator
+                  </CardTitle>
+                  <CardDescription>
+                    Generate a project idea based on your interests. For personalized projects based on your career goals and skills,
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto" 
+                      onClick={() => navigate("/mentor-resources")}
+                    >
+                      visit the Career Hub
+                    </Button>.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ProjectGenerator />
+                </CardContent>
+              </Card>
             </TabsContent>
             
             <TabsContent value="resume">
-              <ResumeGenerator />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText size={18} /> Quick Resume Builder
+                  </CardTitle>
+                  <CardDescription>
+                    Create a basic ATS-optimized resume. For a resume tailored to your full profile and career goals,
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto" 
+                      onClick={() => navigate("/mentor-resources")}
+                    >
+                      visit the Career Hub
+                    </Button>.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResumeGenerator />
+                </CardContent>
+              </Card>
             </TabsContent>
             
             <TabsContent value="interview">
