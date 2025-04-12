@@ -11,6 +11,7 @@ import MentorChat from "@/components/MentorChat";
 import DailyProgress from "@/components/DailyProgress";
 import DashboardSummary from "@/components/dashboard/DashboardSummary";
 import DashboardProgressChart from "@/components/dashboard/DashboardProgressChart";
+import DashboardInput from "@/components/dashboard/DashboardInput";
 import { useEffect, useState } from "react";
 import { getUserDashboardData } from "@/services/progressTracker";
 
@@ -22,12 +23,18 @@ const currentUser = {
 
 const Index = () => {
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   useEffect(() => {
     // Get dashboard data for the current user
     const data = getUserDashboardData(currentUser.userId, currentUser.username);
     setDashboardData(data);
-  }, []);
+  }, [refreshTrigger]);
+
+  const handleInputSubmit = () => {
+    // Trigger a refresh of the dashboard data
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   if (!dashboardData) {
     return <div className="p-6">Loading dashboard data...</div>;
@@ -51,6 +58,13 @@ const Index = () => {
                 tasksCompletedToday={dashboardData.tasksCompletedToday}
                 coursesCompletedToday={dashboardData.coursesCompletedToday}
                 weeklyProgress={dashboardData.weeklyProgress}
+              />
+
+              {/* Dashboard Input Form - NEW COMPONENT */}
+              <DashboardInput 
+                userId={currentUser.userId}
+                username={currentUser.username}
+                onInputSubmit={handleInputSubmit}
               />
 
               {/* Dashboard Progress Chart */}
@@ -165,6 +179,31 @@ const Index = () => {
             <div className="space-y-6">
               {/* Daily Progress - New Component */}
               <DailyProgress />
+              
+              {/* User Progress History - NEW COMPONENT */}
+              {dashboardData.dailyInputs && dashboardData.dailyInputs.length > 0 && (
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-semibold">Your Progress History</CardTitle>
+                    <CardDescription>Your recorded daily progress</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {dashboardData.dailyInputs.map((input: any, index: number) => (
+                        <div key={index} className="flex justify-between items-center p-2 rounded-md border border-gray-100 hover:bg-gray-50">
+                          <div>
+                            <p className="font-medium text-sm">{new Date(input.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+                            <div className="flex gap-4 mt-1 text-xs text-gray-500">
+                              <span>Tasks: {input.tasksCompleted}</span>
+                              <span>Courses: {input.coursesCompleted}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               
               {/* Recommended Career Paths */}
               <div className="mentor-card">

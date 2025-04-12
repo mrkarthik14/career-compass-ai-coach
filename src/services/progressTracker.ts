@@ -13,6 +13,11 @@ interface UserProgress {
   totalTasksCompleted: number;
   totalCoursesCompleted: number;
   lastVisit?: Date;
+  dailyInputs?: {
+    tasksCompleted: number;
+    coursesCompleted: number;
+    date: string;
+  }[];
 }
 
 // Initialize with sample data (in a real app, this would come from a database)
@@ -27,7 +32,8 @@ const userProgressData: Record<string, UserProgress> = {
     ],
     totalTasksCompleted: 6,
     totalCoursesCompleted: 2,
-    lastVisit: new Date(Date.now() - 86400000)
+    lastVisit: new Date(Date.now() - 86400000),
+    dailyInputs: []
   }
 };
 
@@ -42,6 +48,61 @@ export const getGreeting = (username: string): string => {
   } else {
     return `Good Evening, ${username}`;
   }
+};
+
+// Add user daily input
+export const addUserDailyInput = (
+  userId: string,
+  username: string,
+  tasksCompleted: number,
+  coursesCompleted: number
+): void => {
+  const today = new Date();
+  const dateString = today.toISOString().split('T')[0];
+  
+  if (!userProgressData[userId]) {
+    userProgressData[userId] = {
+      userId,
+      username,
+      visits: [],
+      totalTasksCompleted: 0,
+      totalCoursesCompleted: 0,
+      dailyInputs: []
+    };
+  }
+  
+  // Add daily input
+  if (!userProgressData[userId].dailyInputs) {
+    userProgressData[userId].dailyInputs = [];
+  }
+  
+  // Check if we already have an entry for today
+  const existingEntryIndex = userProgressData[userId].dailyInputs!.findIndex(
+    entry => entry.date === dateString
+  );
+  
+  if (existingEntryIndex >= 0) {
+    // Update existing entry
+    userProgressData[userId].dailyInputs![existingEntryIndex] = {
+      tasksCompleted,
+      coursesCompleted,
+      date: dateString
+    };
+  } else {
+    // Add new entry
+    userProgressData[userId].dailyInputs!.push({
+      tasksCompleted,
+      coursesCompleted,
+      date: dateString
+    });
+  }
+  
+  // Update totals
+  userProgressData[userId].totalTasksCompleted += tasksCompleted;
+  userProgressData[userId].totalCoursesCompleted += coursesCompleted;
+  
+  // Record this visit
+  recordVisit(userId, username);
 };
 
 // Record a new visit with tasks and courses completed
@@ -64,12 +125,11 @@ export const recordVisit = (
       visits: [visit],
       totalTasksCompleted: tasksCompleted,
       totalCoursesCompleted: coursesCompleted,
-      lastVisit: new Date()
+      lastVisit: new Date(),
+      dailyInputs: []
     };
   } else {
     userProgressData[userId].visits.push(visit);
-    userProgressData[userId].totalTasksCompleted += tasksCompleted;
-    userProgressData[userId].totalCoursesCompleted += coursesCompleted;
     userProgressData[userId].lastVisit = new Date();
   }
 };
@@ -85,8 +145,13 @@ export const getUserDashboardData = (userId: string, username: string): {
     courses: { completed: number; total: number };
   };
   chartData: any;
+  dailyInputs?: {
+    tasksCompleted: number;
+    coursesCompleted: number;
+    date: string;
+  }[];
 } => {
-  // Record this visit automatically
+  // Record this visit automatically (without incrementing tasks/courses)
   recordVisit(userId, username);
   
   // Get or create user progress data
@@ -95,7 +160,8 @@ export const getUserDashboardData = (userId: string, username: string): {
     username,
     visits: [],
     totalTasksCompleted: 0,
-    totalCoursesCompleted: 0
+    totalCoursesCompleted: 0,
+    dailyInputs: []
   };
   
   // Calculate today's date boundaries
@@ -149,11 +215,15 @@ export const getUserDashboardData = (userId: string, username: string): {
     const dayTasks = dayVisits.reduce((sum, visit) => sum + visit.tasksCompleted, 0);
     const dayCourses = dayVisits.reduce((sum, visit) => sum + visit.coursesCompleted, 0);
     
+    // If we have user input for this day, use that instead
+    const dateString = date.toISOString().split('T')[0];
+    const userInput = userData.dailyInputs?.find(input => input.date === dateString);
+    
     return {
       name: date.toLocaleDateString('en-US', { weekday: 'short' }),
-      tasks: dayTasks,
-      courses: dayCourses,
-      date: date.toISOString().split('T')[0]
+      tasks: userInput ? userInput.tasksCompleted : dayTasks,
+      courses: userInput ? userInput.coursesCompleted : dayCourses,
+      date: dateString
     };
   }).reverse();
   
@@ -166,6 +236,7 @@ export const getUserDashboardData = (userId: string, username: string): {
       tasks: { completed: weeklyTasksCompleted, total: 10 }, // Assuming 10 target tasks per week
       courses: { completed: weeklyCoursesCompleted, total: 3 } // Assuming 3 target courses per week
     },
-    chartData: last7Days
+    chartData: last7Days,
+    dailyInputs: userData.dailyInputs
   };
 };
