@@ -1,4 +1,3 @@
-
 import { ArrowRight, Brain, BookOpen, MessageSquare, LineChart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -12,6 +11,11 @@ const Landing = () => {
           <div className="flex items-center justify-between">
             <div className="text-white font-display font-bold text-2xl">CareerCompass</div>
             <div className="flex items-center gap-4">
+              <Link to="/profile-login">
+                <Button variant="ghost" className="text-white hover:bg-white/10">
+                  Profile Login
+                </Button>
+              </Link>
               <Link to="/login">
                 <Button variant="ghost" className="text-white hover:bg-white/10">
                   Login
@@ -152,6 +156,11 @@ const Landing = () => {
               Join thousands of professionals who are accelerating their careers with personalized AI guidance.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/profile-login">
+                <Button size="lg" className="bg-white text-mentor-purple hover:bg-white/90 w-full sm:w-auto">
+                  <User className="mr-2 h-4 w-4" /> Manage Profile
+                </Button>
+              </Link>
               <Link to="/signup">
                 <Button size="lg" className="bg-white text-mentor-purple hover:bg-white/90 w-full sm:w-auto">
                   Get Started Free
