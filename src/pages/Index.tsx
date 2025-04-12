@@ -9,18 +9,30 @@ import ProgressBar from "@/components/ProgressBar";
 import GoalCard from "@/components/GoalCard";
 import MentorChat from "@/components/MentorChat";
 import DailyProgress from "@/components/DailyProgress";
+import DashboardSummary from "@/components/dashboard/DashboardSummary";
+import DashboardProgressChart from "@/components/dashboard/DashboardProgressChart";
+import { useEffect, useState } from "react";
+import { getUserDashboardData } from "@/services/progressTracker";
 
-const progressData = [
-  { name: "Mon", progress: 30 },
-  { name: "Tue", progress: 45 },
-  { name: "Wed", progress: 38 },
-  { name: "Thu", progress: 65 },
-  { name: "Fri", progress: 55 },
-  { name: "Sat", progress: 70 },
-  { name: "Sun", progress: 60 },
-];
+// Sample user data - in a real app, this would come from authentication
+const currentUser = {
+  userId: "user123",
+  username: "John Smith"
+};
 
 const Index = () => {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    // Get dashboard data for the current user
+    const data = getUserDashboardData(currentUser.userId, currentUser.username);
+    setDashboardData(data);
+  }, []);
+
+  if (!dashboardData) {
+    return <div className="p-6">Loading dashboard data...</div>;
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-mentor-gray">
       <Sidebar />
@@ -32,50 +44,17 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               
-              {/* Weekly Progress Card */}
-              <div className="mentor-gradient-card text-white p-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">Weekly Progress</h2>
-                  <Tabs defaultValue="weekly">
-                    <TabsList className="bg-white/10">
-                      <TabsTrigger value="weekly" className="data-[state=active]:bg-white/20">
-                        Weekly
-                      </TabsTrigger>
-                      <TabsTrigger value="monthly" className="data-[state=active]:bg-white/20">
-                        Monthly
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
+              {/* Dashboard Summary */}
+              <DashboardSummary 
+                greeting={dashboardData.greeting}
+                totalVisits={dashboardData.totalVisits}
+                tasksCompletedToday={dashboardData.tasksCompletedToday}
+                coursesCompletedToday={dashboardData.coursesCompletedToday}
+                weeklyProgress={dashboardData.weeklyProgress}
+              />
 
-                <ProgressChart data={progressData} />
-
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-sm opacity-80">Learning Hours</div>
-                    <div className="mt-1">
-                      <span className="text-2xl font-semibold">12</span>
-                      <span className="text-sm ml-1">hrs</span>
-                    </div>
-                    <div className="text-xs opacity-70 mt-1">This week</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-sm opacity-80">Tasks Completed</div>
-                    <div className="mt-1">
-                      <span className="text-2xl font-semibold">8</span>
-                      <span className="text-sm ml-1">/10</span>
-                    </div>
-                    <div className="text-xs opacity-70 mt-1">80% complete</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-sm opacity-80">Skills Improved</div>
-                    <div className="mt-1">
-                      <span className="text-2xl font-semibold">3</span>
-                    </div>
-                    <div className="text-xs opacity-70 mt-1">This week</div>
-                  </div>
-                </div>
-              </div>
+              {/* Dashboard Progress Chart */}
+              <DashboardProgressChart data={dashboardData.chartData} />
 
               {/* Profile Completion */}
               <div className="mentor-card">
