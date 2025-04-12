@@ -1,4 +1,3 @@
-
 import { Book, Briefcase, Code, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +12,7 @@ import DailyProgress from "@/components/DailyProgress";
 import DashboardSummary from "@/components/dashboard/DashboardSummary";
 import DashboardProgressChart from "@/components/dashboard/DashboardProgressChart";
 import DashboardInput from "@/components/dashboard/DashboardInput";
+import ProfileCompletionTracker from "@/components/profile/ProfileCompletionTracker";
 import { useEffect, useState } from "react";
 import { getUserDashboardData } from "@/services/progressTracker";
 
@@ -61,7 +61,7 @@ const Index = () => {
                 weeklyProgress={dashboardData.weeklyProgress}
               />
 
-              {/* Dashboard Input Form - NEW COMPONENT */}
+              {/* Dashboard Input Form */}
               <DashboardInput 
                 userId={currentUser.userId}
                 username={currentUser.username}
@@ -72,42 +72,7 @@ const Index = () => {
               <DashboardProgressChart data={dashboardData.chartData} />
 
               {/* Profile Completion */}
-              <div className="mentor-card">
-                <div className="flex justify-between mb-4">
-                  <h3 className="font-semibold">Profile Completion</h3>
-                  <Button variant="outline" size="sm">Complete Profile</Button>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Personal Information</span>
-                      <span className="font-medium">100%</span>
-                    </div>
-                    <ProgressBar value={100} max={100} />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Skills Assessment</span>
-                      <span className="font-medium">75%</span>
-                    </div>
-                    <ProgressBar value={75} max={100} />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Career Goals</span>
-                      <span className="font-medium">50%</span>
-                    </div>
-                    <ProgressBar value={50} max={100} />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Learning Preferences</span>
-                      <span className="font-medium">25%</span>
-                    </div>
-                    <ProgressBar value={25} max={100} />
-                  </div>
-                </div>
-              </div>
+              <ProfileCompletionTracker />
 
               {/* Learning Goals */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -178,10 +143,10 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
-              {/* Daily Progress - New Component */}
+              {/* Daily Progress */}
               <DailyProgress />
               
-              {/* User Progress History - NEW COMPONENT */}
+              {/* User Progress History */}
               {dashboardData.dailyInputs && dashboardData.dailyInputs.length > 0 && (
                 <Card className="shadow-sm">
                   <CardHeader className="pb-2">

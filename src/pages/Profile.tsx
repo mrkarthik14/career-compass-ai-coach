@@ -6,18 +6,39 @@ import ProfileBio from "@/components/profile/ProfileBio";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import Sidebar from "@/components/Sidebar";
 import SkillsList from "@/components/profile/SkillsList";
+import { getUserProfile } from "@/services/profileService";
+import { useEffect, useState } from "react";
 
-// Default values for the profile
-const defaultValues = {
-  name: "John Smith",
-  email: "john.smith@example.com",
-  bio: "Software developer with a passion for building user-friendly applications.",
-  title: "Software Developer",
-  location: "San Francisco, CA",
-  website: "https://github.com/johnsmith",
+// Current user context (in a real app, this would come from authentication)
+const currentUser = {
+  userId: "user123",
+  username: "John Smith"
 };
 
 const Profile = () => {
+  const [profileData, setProfileData] = useState({
+    name: "",
+    email: "",
+    bio: "",
+    title: "",
+    location: "",
+    website: "",
+  });
+
+  useEffect(() => {
+    const userData = getUserProfile(currentUser.userId);
+    if (userData) {
+      setProfileData({
+        name: userData.fullName,
+        email: userData.email,
+        bio: userData.bio,
+        title: userData.title,
+        location: userData.location,
+        website: userData.website,
+      });
+    }
+  }, []);
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -30,12 +51,12 @@ const Profile = () => {
             <div className="grid gap-6 md:grid-cols-12">
               {/* Profile Summary Card */}
               <Card className="md:col-span-4">
-                <ProfileHeader profileData={defaultValues} />
+                <ProfileHeader profileData={profileData} />
               </Card>
 
               {/* Profile Details */}
               <div className="md:col-span-8 space-y-6">
-                <ProfileBio bio={defaultValues.bio} />
+                <ProfileBio bio={profileData.bio} />
                 <SkillsList />
                 <LearningProgress />
               </div>
