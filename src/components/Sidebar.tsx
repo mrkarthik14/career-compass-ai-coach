@@ -1,115 +1,90 @@
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import {
-  BarChart,
-  BookOpen,
-  Calendar,
-  Compass,
-  FileText,
-  Home,
-  LineChart,
-  MessageSquare,
-  Settings,
-  User,
-} from "lucide-react";
 
-const navItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Career Paths",
-    href: "/career-paths",
-    icon: Compass,
-  },
-  {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    title: "Skills Analysis",
-    href: "/skills",
-    icon: BarChart,
-  },
-  {
-    title: "Weekly Goals",
-    href: "/goals",
-    icon: Calendar,
-  },
-  {
-    title: "Resources",
-    href: "/resources",
-    icon: BookOpen,
-  },
-  {
-    title: "Mentor Chat",
-    href: "/chat",
-    icon: MessageSquare,
-  },
-  {
-    title: "Progress",
-    href: "/progress",
-    icon: LineChart,
-  },
-  {
-    title: "Documents",
-    href: "/documents",
-    icon: FileText,
-  },
-  {
-    title: "Profile Management",
-    href: "/profile-management",
-    icon: Settings,
-  },
-];
+import { Link } from "react-router-dom";
+import { BookOpen, Brain, Calendar, ChevronLeft, ChevronRight, Home, LineChart, MessageSquare, User, FileText, Code, BookOpenCheck } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   className?: string;
 }
 
 const Sidebar = ({ className }: SidebarProps) => {
-  const { pathname } = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
 
   return (
     <div
       className={cn(
-        "flex flex-col w-64 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 h-full py-4",
+        "flex flex-col h-screen bg-mentor-purple text-white transition-all duration-300",
+        collapsed ? "w-20" : "w-64",
         className
       )}
     >
-      <div className="px-6 py-2">
-        <Link to="/" className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-          CareerCompass
-        </Link>
+      <div className="flex items-center justify-between p-4">
+        {!collapsed && (
+          <div className="font-display font-bold text-xl">
+            CareerCompass
+          </div>
+        )}
+        <button
+          onClick={toggleSidebar}
+          className="p-2 rounded-full hover:bg-white/10 transition-colors"
+        >
+          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        </button>
       </div>
-      <nav className="flex-1 px-2 py-4 space-y-1">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            to={item.href}
-            className={cn(
-              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors",
-              pathname === item.href
-                ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-                : "text-gray-600 dark:text-gray-400"
-            )}
-          >
-            <item.icon
-              className={cn(
-                "mr-2 h-4 w-4",
-                pathname === item.href
-                  ? "text-gray-500 dark:text-gray-300"
-                  : "text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300"
-              )}
-            />
-            {item.title}
-          </Link>
-        ))}
-      </nav>
+
+      <div className="flex-1 py-8">
+        <nav className="space-y-2 px-3">
+          <NavItem icon={Home} label="Dashboard" to="/dashboard" collapsed={collapsed} />
+          <NavItem icon={User} label="My Profile" to="/profile" collapsed={collapsed} />
+          <NavItem icon={LineChart} label="Career Paths" to="/career-paths" collapsed={collapsed} />
+          <NavItem icon={Brain} label="Skills Analysis" to="/skills" collapsed={collapsed} />
+          <NavItem icon={Calendar} label="Weekly Goals" to="/goals" collapsed={collapsed} />
+          <NavItem icon={BookOpen} label="Resources" to="/resources" collapsed={collapsed} />
+          <NavItem icon={BookOpenCheck} label="Mentor Resources" to="/mentor-resources" collapsed={collapsed} />
+          <NavItem icon={MessageSquare} label="Mentor Chat" to="/chat" collapsed={collapsed} />
+        </nav>
+      </div>
+
+      <div className="p-4">
+        <div className={cn(
+          "rounded-lg p-3 bg-white/10",
+          collapsed ? "items-center justify-center" : "items-start"
+        )}>
+          {!collapsed ? (
+            <div className="text-sm">
+              <p className="font-semibold">Need help?</p>
+              <p className="opacity-80 text-xs mt-1">Ask your AI mentor for guidance</p>
+            </div>
+          ) : (
+            <MessageSquare size={20} />
+          )}
+        </div>
+      </div>
     </div>
+  );
+};
+
+interface NavItemProps {
+  icon: React.ElementType;
+  label: string;
+  to: string;
+  collapsed: boolean;
+}
+
+const NavItem = ({ icon: Icon, label, to, collapsed }: NavItemProps) => {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors text-white/90 hover:text-white"
+    >
+      <Icon size={20} />
+      {!collapsed && <span>{label}</span>}
+    </Link>
   );
 };
 
