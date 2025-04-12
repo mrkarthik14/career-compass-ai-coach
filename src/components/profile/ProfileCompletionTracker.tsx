@@ -11,14 +11,31 @@ interface ProfileSection {
 }
 
 const ProfileCompletionTracker = () => {
-  const [profileSections, setProfileSections] = useState<ProfileSection[]>([
-    { name: "Personal Information", completionPercentage: 100 },
-    { name: "Skills Assessment", completionPercentage: 75 },
-    { name: "Career Goals", completionPercentage: 50 },
-    { name: "Learning Preferences", completionPercentage: 25 },
-  ]);
-  
+  const [profileSections, setProfileSections] = useState<ProfileSection[]>([]);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // In a real app, you would get the userId from authentication
+    const userId = "user123";
+    const profileCompletion = getUserProfileCompletion(userId);
+    
+    if (profileCompletion) {
+      setProfileSections([
+        { name: "Personal Information", completionPercentage: profileCompletion.personalInfo },
+        { name: "Skills Assessment", completionPercentage: profileCompletion.skillsAssessment },
+        { name: "Career Goals", completionPercentage: profileCompletion.careerGoals },
+        { name: "Learning Preferences", completionPercentage: profileCompletion.learningPreferences },
+      ]);
+    } else {
+      // Set default values if no profile found
+      setProfileSections([
+        { name: "Personal Information", completionPercentage: 0 },
+        { name: "Skills Assessment", completionPercentage: 0 },
+        { name: "Career Goals", completionPercentage: 0 },
+        { name: "Learning Preferences", completionPercentage: 0 },
+      ]);
+    }
+  }, []);
 
   const handleCompleteProfile = () => {
     navigate("/profile");

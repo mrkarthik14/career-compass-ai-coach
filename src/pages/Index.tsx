@@ -1,6 +1,6 @@
+
 import { Book, Briefcase, Code, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
@@ -15,6 +15,8 @@ import DashboardInput from "@/components/dashboard/DashboardInput";
 import ProfileCompletionTracker from "@/components/profile/ProfileCompletionTracker";
 import { useEffect, useState } from "react";
 import { getUserDashboardData } from "@/services/progressTracker";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample user data - in a real app, this would come from authentication
 const currentUser = {
@@ -25,6 +27,8 @@ const currentUser = {
 const Index = () => {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Get dashboard data for the current user
@@ -35,6 +39,18 @@ const Index = () => {
   const handleInputSubmit = () => {
     // Trigger a refresh of the dashboard data
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleExploreCareerPaths = () => {
+    navigate("/career-paths");
+  };
+
+  const handleStartReflection = () => {
+    toast({
+      title: "Reflection Started",
+      description: "Your weekly reflection session has been initiated.",
+    });
+    // In a real app, this would open a reflection modal or navigate to a reflection page
   };
 
   if (!dashboardData) {
@@ -190,14 +206,14 @@ const Index = () => {
                           {path.match}% match based on your profile
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={handleExploreCareerPaths}>
                         View Details
                       </Button>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={handleExploreCareerPaths}>
                     Explore All Career Paths
                   </Button>
                 </div>
@@ -209,7 +225,7 @@ const Index = () => {
                 <p className="text-sm text-gray-600 mb-4">
                   Take a moment to reflect on your progress and set goals for next week.
                 </p>
-                <Button className="w-full">Start Reflection</Button>
+                <Button className="w-full" onClick={handleStartReflection}>Start Reflection</Button>
               </div>
 
               {/* AI Mentor Chat Widget */}

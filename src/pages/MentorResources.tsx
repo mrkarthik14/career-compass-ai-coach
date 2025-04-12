@@ -6,10 +6,15 @@ import Header from "@/components/Header";
 import { BookOpen, Code, FileText, MessageSquare, User } from "lucide-react";
 import CareerMentorHub from "@/components/mentor/CareerMentorHub";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const MentorResources = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("hub");
+
+  const handleOpenChat = () => {
+    navigate("/chat");
+  };
 
   return (
     <div className="flex h-screen">
@@ -49,50 +54,66 @@ const MentorResources = () => {
             </TabsContent>
             
             <TabsContent value="roadmap">
-              <div className="flex justify-center items-center p-6">
-                <button 
+              <div className="flex flex-col justify-center items-center p-6 space-y-4">
+                <p className="text-center text-gray-600">
+                  Please set up your profile in the Career Hub first to get a personalized learning roadmap
+                </p>
+                <Button 
                   onClick={() => setActiveTab("hub")}
-                  className="text-mentor-purple hover:underline flex items-center gap-2"
+                  variant="outline"
+                  className="flex items-center gap-2"
                 >
                   <User size={16} /> 
-                  Please set up your profile in the Career Hub first to get a personalized learning roadmap
-                </button>
+                  Go to Career Hub
+                </Button>
               </div>
             </TabsContent>
             
             <TabsContent value="portfolio">
-              <div className="flex justify-center items-center p-6">
-                <button 
+              <div className="flex flex-col justify-center items-center p-6 space-y-4">
+                <p className="text-center text-gray-600">
+                  Please set up your profile in the Career Hub first to get a personalized portfolio plan
+                </p>
+                <Button 
                   onClick={() => setActiveTab("hub")}
-                  className="text-mentor-purple hover:underline flex items-center gap-2"
+                  variant="outline"
+                  className="flex items-center gap-2"
                 >
                   <User size={16} /> 
-                  Please set up your profile in the Career Hub first to get a personalized portfolio plan
-                </button>
+                  Go to Career Hub
+                </Button>
               </div>
             </TabsContent>
             
             <TabsContent value="projects">
-              <div className="flex justify-center items-center p-6">
-                <button 
+              <div className="flex flex-col justify-center items-center p-6 space-y-4">
+                <p className="text-center text-gray-600">
+                  Please set up your profile in the Career Hub first to get personalized project ideas
+                </p>
+                <Button 
                   onClick={() => setActiveTab("hub")}
-                  className="text-mentor-purple hover:underline flex items-center gap-2"
+                  variant="outline"
+                  className="flex items-center gap-2"
                 >
                   <User size={16} /> 
-                  Please set up your profile in the Career Hub first to get personalized project ideas
-                </button>
+                  Go to Career Hub
+                </Button>
               </div>
             </TabsContent>
             
             <TabsContent value="chat">
-              <div className="flex justify-center items-center p-6">
-                <button 
-                  onClick={() => navigate("/chat")}
-                  className="text-mentor-purple hover:underline flex items-center gap-2"
+              <div className="flex flex-col justify-center items-center p-6 space-y-4">
+                <p className="text-center text-gray-600">
+                  Connect with your AI Mentor for personalized career guidance
+                </p>
+                <Button 
+                  onClick={handleOpenChat}
+                  variant="default"
+                  className="flex items-center gap-2"
                 >
                   <MessageSquare size={16} /> 
-                  Connect with your AI Mentor
-                </button>
+                  Start AI Mentor Chat
+                </Button>
               </div>
             </TabsContent>
           </Tabs>
