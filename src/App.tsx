@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import MentorChat from "./pages/MentorChat";
+import Courses from "./pages/Courses";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/mentor-resources" element={<MentorResources />} />
           <Route path="/chat" element={<MentorChat />} />
           <Route path="/enhanced-chat" element={<EnhancedMentorChat />} />
+          <Route path="/courses" element={<Courses />} />
           
           {/* Authentication Routes */}
           <Route path="/login" element={<Login />} />
