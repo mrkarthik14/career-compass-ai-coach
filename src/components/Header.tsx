@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Bell, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {
   text?: string;
@@ -108,11 +108,11 @@ const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <header className="bg-white border-b border-gray-100 py-4 px-6">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 py-4 px-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <h1 className="text-2xl font-display font-semibold">{text}</h1>
-          <p className="text-gray-500 text-sm mt-1">{currentDate}</p>
+          <h1 className="text-2xl font-display font-semibold dark:text-white">{text}</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{currentDate}</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -182,6 +182,8 @@ const Header = ({ text = "Career Dashboard" }: HeaderProps) => {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <ThemeToggle />
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-mentor-lightPurple flex items-center justify-center text-white font-medium">
