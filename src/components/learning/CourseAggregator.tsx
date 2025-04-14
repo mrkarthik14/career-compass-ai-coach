@@ -55,6 +55,7 @@ const CourseAggregator = () => {
 
   // For the interests input
   const [interestInput, setInterestInput] = useState("");
+  const [selectAllPlatforms, setSelectAllPlatforms] = useState(false);
   
   // Platforms available
   const platforms = [
@@ -113,6 +114,29 @@ const CourseAggregator = () => {
       });
     }
   };
+
+  const toggleAllPlatforms = () => {
+    if (selectAllPlatforms) {
+      // Deselect all platforms
+      setUserPreferences({
+        ...userPreferences,
+        preferredPlatforms: []
+      });
+      setSelectAllPlatforms(false);
+    } else {
+      // Select all platforms
+      setUserPreferences({
+        ...userPreferences,
+        preferredPlatforms: [...platforms]
+      });
+      setSelectAllPlatforms(true);
+    }
+  };
+
+  // Update selectAllPlatforms state when all platforms are selected/deselected manually
+  useEffect(() => {
+    setSelectAllPlatforms(userPreferences.preferredPlatforms.length === platforms.length);
+  }, [userPreferences.preferredPlatforms, platforms.length]);
 
   const handleSearch = async () => {
     if (!userPreferences.careerGoal) {
@@ -246,6 +270,19 @@ const CourseAggregator = () => {
 
               <div>
                 <Label>Preferred Learning Platforms</Label>
+                <div className="mb-2 flex items-center space-x-2">
+                  <Checkbox 
+                    id="platform-all"
+                    checked={selectAllPlatforms}
+                    onCheckedChange={toggleAllPlatforms}
+                  />
+                  <label
+                    htmlFor="platform-all"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Select All Platforms
+                  </label>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-2">
                   {platforms.map((platform) => (
                     <div key={platform} className="flex items-center space-x-2">
