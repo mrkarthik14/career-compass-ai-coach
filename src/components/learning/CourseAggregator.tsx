@@ -66,7 +66,14 @@ const CourseAggregator = () => {
     "NVIDIA",
     "Cisco",
     "edX",
-    "FreeCodeCamp"
+    "FreeCodeCamp",
+    "Pluralsight",
+    "Codecademy",
+    "Khan Academy",
+    "MIT OpenCourseWare",
+    "Skillshare",
+    "Udacity",
+    "Brilliant"
   ];
 
   // Load saved courses on component mount

@@ -170,6 +170,62 @@ const mockCourses: Course[] = [
     imageUrl: "https://prod-discovery.edx-cdn.org/media/course/image/da1b2400-322b-459b-97b0-0c557f05d017-a3d1899d3fb9.small.jpg",
     level: "Beginner",
     topics: ["Computer Science", "C", "Python", "SQL", "JavaScript"]
+  },
+  {
+    id: "13",
+    title: "JavaScript Algorithms and Data Structures",
+    description: "Learn JavaScript and improve your problem-solving skills with algorithmic challenges",
+    platform: "FreeCodeCamp",
+    duration: "300 hours",
+    price: 0,
+    isPaid: false,
+    rating: 4.8,
+    url: "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/",
+    imageUrl: "https://freecodecamp.org/news/content/images/2021/06/freecodecamp-org-gravatar.jpeg",
+    level: "Intermediate",
+    topics: ["JavaScript", "Algorithms", "Data Structures", "Programming"]
+  },
+  {
+    id: "14",
+    title: "Python Programming Masterclass",
+    description: "Learn Python from the basics all the way to creating your own applications and games",
+    platform: "Codecademy",
+    duration: "30 hours",
+    price: 19.99,
+    isPaid: true,
+    rating: 4.7,
+    url: "https://www.codecademy.com/learn/learn-python-3",
+    imageUrl: "https://codecademy.com/resources/blog/content/images/2021/05/python-course.png",
+    level: "Beginner",
+    topics: ["Python", "Programming", "Apps", "Games"]
+  },
+  {
+    id: "15",
+    title: "Calculus for Machine Learning",
+    description: "Master the mathematical foundations required for advanced machine learning",
+    platform: "Khan Academy",
+    duration: "40 hours",
+    price: 0,
+    isPaid: false, 
+    rating: 4.8,
+    url: "https://www.khanacademy.org/math/calculus-all-old",
+    imageUrl: "https://cdn.kastatic.org/images/khan-logo-vertical-transparent.png",
+    level: "Advanced",
+    topics: ["Mathematics", "Calculus", "Machine Learning", "Statistics"]
+  },
+  {
+    id: "16",
+    title: "Introduction to Computer Science and Programming Using Python",
+    description: "A rigorous introduction to computer science and programming using Python",
+    platform: "MIT OpenCourseWare",
+    duration: "9 weeks", 
+    price: 0,
+    isPaid: false,
+    rating: 4.9,
+    url: "https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/",
+    imageUrl: "https://ocw.mit.edu/images/mit_logo_footer.png",
+    level: "Beginner",
+    topics: ["Python", "Computer Science", "Programming", "Algorithms"]
   }
 ];
 
