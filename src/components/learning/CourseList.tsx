@@ -101,7 +101,7 @@ const CourseList = ({ courses, userPreferences }: CourseListProps) => {
                   <SelectValue placeholder="Platform" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Platforms</SelectItem>
+                  <SelectItem value="all">All Platforms</SelectItem>
                   {uniquePlatforms.map(platform => (
                     <SelectItem key={platform} value={platform}>{platform}</SelectItem>
                   ))}
@@ -113,7 +113,7 @@ const CourseList = ({ courses, userPreferences }: CourseListProps) => {
                   <SelectValue placeholder="Level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Levels</SelectItem>
+                  <SelectItem value="all">All Levels</SelectItem>
                   <SelectItem value="Beginner">Beginner</SelectItem>
                   <SelectItem value="Intermediate">Intermediate</SelectItem>
                   <SelectItem value="Advanced">Advanced</SelectItem>
@@ -125,7 +125,7 @@ const CourseList = ({ courses, userPreferences }: CourseListProps) => {
                   <SelectValue placeholder="Price" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Prices</SelectItem>
+                  <SelectItem value="all">All Prices</SelectItem>
                   <SelectItem value="Free">Free</SelectItem>
                   <SelectItem value="Paid">Paid</SelectItem>
                 </SelectContent>
