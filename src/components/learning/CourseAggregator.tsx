@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,12 @@ const CourseAggregator = () => {
     "FreeCodeCamp"
   ];
 
+  // Load saved courses on component mount
+  useEffect(() => {
+    // This could be expanded to load previously saved preferences
+    // Currently just ensuring the hook is properly in place
+  }, []);
+
   const handleAddInterest = () => {
     if (interestInput.trim() && !userPreferences.interests.includes(interestInput.trim())) {
       setUserPreferences({
@@ -125,12 +131,21 @@ const CourseAggregator = () => {
       // In a real implementation, this would connect to your course aggregation service
       const results = await searchCourses(userPreferences);
       setCourses(results);
-      setActiveTab("courses");
-      toast({
-        title: "Courses found",
-        description: `Found ${results.length} courses matching your preferences`,
-      });
+      if (results.length > 0) {
+        setActiveTab("courses");
+        toast({
+          title: "Courses found",
+          description: `Found ${results.length} courses matching your preferences`,
+        });
+      } else {
+        toast({
+          title: "No courses found",
+          description: "No courses match your preferences. Try adjusting your filters.",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
+      console.error("Error searching courses:", error);
       toast({
         title: "Error finding courses",
         description: "There was an error searching for courses. Please try again.",

@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,10 +23,10 @@ const CourseList = ({ courses, userPreferences }: CourseListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Load saved courses on component mount
-  useState(() => {
+  useEffect(() => {
     const savedCourses = getSavedCourses();
     setSavedCourseIds(savedCourses.map(course => course.id));
-  });
+  }, []);
 
   const filteredCourses = courses.filter(course => {
     // Apply platform filter
