@@ -3,6 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { sendMessageToAI } from "@/utils/aiUtils";
+
+type AIModelType = "local" | "chatgpt" | "claude";
 
 interface Message {
   id: number;
@@ -23,8 +28,11 @@ const initialMessages: Message[] = [
 const MentorChat = () => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<AIModelType>("local");
+  const { toast } = useToast();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
     // Add user message
@@ -37,29 +45,32 @@ const MentorChat = () => {
 
     setMessages([...messages, userMessage]);
     setNewMessage("");
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Get response from AI using our utility
+      const aiResponse = await sendMessageToAI({
+        userMessage: newMessage,
+        model: selectedModel
+      });
+      
       const botMessage: Message = {
         id: messages.length + 2,
-        text: getBotResponse(newMessage),
+        text: aiResponse,
         sender: "bot",
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, botMessage]);
-    }, 1000);
-  };
-
-  const getBotResponse = (message: string): string => {
-    // Simple response logic - in a real app this would connect to an API
-    if (message.toLowerCase().includes("skill") || message.toLowerCase().includes("learn")) {
-      return "Based on your profile and career goals, I recommend focusing on developing your skills in data analysis and project management. Would you like some learning resources?";
-    } else if (message.toLowerCase().includes("job") || message.toLowerCase().includes("career")) {
-      return "Looking at your experience, you might be a good fit for roles like Product Analyst, Junior Data Scientist, or Business Intelligence Specialist. Would you like me to explain any of these career paths in more detail?";
-    } else if (message.toLowerCase().includes("interview")) {
-      return "I'd be happy to help you prepare for interviews! Would you like to do a mock interview for a specific role, or would you prefer general interview tips?";
-    } else {
-      return "I'm here to help with your career development! You can ask me about skill recommendations, learning resources, career paths, or even request a mock interview.";
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Error sending message:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,8 +80,24 @@ const MentorChat = () => {
 
   return (
     <div className="flex flex-col h-[400px] border border-gray-200 rounded-xl overflow-hidden">
-      <div className="bg-mentor-purple text-white px-4 py-3">
+      <div className="bg-mentor-purple text-white px-4 py-3 flex justify-between items-center">
         <h3 className="font-medium">AI Mentor Chat</h3>
+        <div className="flex items-center">
+          <span className="text-xs mr-2 text-white/80">Model:</span>
+          <Select
+            value={selectedModel}
+            onValueChange={(value) => setSelectedModel(value as AIModelType)}
+          >
+            <SelectTrigger className="h-7 w-24 text-xs bg-white/10 border-white/20">
+              <SelectValue placeholder="Model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="local">Local</SelectItem>
+              <SelectItem value="chatgpt">ChatGPT</SelectItem>
+              <SelectItem value="claude">Claude</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
@@ -109,9 +136,13 @@ const MentorChat = () => {
               }
             }}
             className="flex-1"
+            disabled={isLoading}
           />
-          <Button onClick={handleSendMessage} size="icon">
-            <Send size={18} />
+          <Button onClick={handleSendMessage} size="icon" disabled={isLoading || !newMessage.trim()}>
+            {isLoading ? 
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : 
+              <Send size={18} />
+            }
           </Button>
         </div>
       </div>
